@@ -13,8 +13,10 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://foufou.city/" />
 
-<!-- Inline SVG favicon (the FouFou cat) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='52' r='34' fill='%23FBE3CE'/><polygon points='22,30 30,18 38,32' fill='%23FBE3CE'/><polygon points='62,32 70,18 78,30' fill='%23FBE3CE'/><rect x='28' y='48' width='18' height='9' rx='3' fill='%23222'/><rect x='54' y='48' width='18' height='9' rx='3' fill='%23222'/><rect x='44' y='51' width='12' height='2.5' fill='%23222'/><circle cx='50' cy='65' r='1.8' fill='%23E58D7A'/><path d='M50 67 Q44 73 40 70 M50 67 Q56 73 60 70' stroke='%23222' stroke-width='2' fill='none' stroke-linecap='round'/></svg>" />
+<!-- Real FouFou app icon -->
+<link rel="icon" type="image/png" sizes="32x32" href="icons/foufou-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icons/foufou-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/foufou-180.png" />
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,8 +44,8 @@
     --ink:        #2A1F1A;   /* warm dark brown-black */
     --ink-soft:   #5C4A41;
 
-    --shadow-hard: 4px 4px 0 var(--ink);
-    --shadow-soft: 0 12px 40px rgba(42, 31, 26, 0.12);
+    --shadow-soft: 0 8px 24px rgba(42, 31, 26, 0.08);
+    --shadow-card: 0 4px 16px rgba(42, 31, 26, 0.10);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,17 +53,22 @@
 
   body {
     font-family: "Heebo", system-ui, sans-serif;
-    background: var(--cream);
     color: var(--ink);
     line-height: 1.65;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(42, 31, 26, 0.04) 1px, transparent 0);
-    background-size: 24px 24px;
+    /* Page-wide peach gradient — matches the app's splash exactly */
+    background:
+      linear-gradient(165deg,
+        var(--peach-1) 0%,
+        var(--peach-2) 35%,
+        var(--peach-3) 75%,
+        var(--cream) 100%) no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 
-  html[lang="en"] body { font-family: "Fraunces", "Heebo", serif; direction: ltr; text-align: left; }
+  html[lang="en"] body { font-family: "Fraunces", "Heebo", serif; direction: ltr; }
   html[lang="en"] { direction: ltr; }
 
   .display {
@@ -71,42 +78,35 @@
     line-height: 1.05;
   }
 
-  /* ============== CAT LOGO (reusable inline SVG) ============== */
+  /* ============== CAT LOGO (real PNG) ============== */
   .cat-logo {
     display: inline-block;
     flex-shrink: 0;
-    transition: transform .3s ease;
+    object-fit: contain;
   }
-  .cat-logo svg { display: block; width: 100%; height: 100%; }
 
   /* ============== NAV ============== */
   nav {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(255, 244, 230, 0.88);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border-bottom: 2px solid var(--ink);
-    padding: 12px 24px;
+    background: rgba(255, 244, 230, 0.75);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(42, 31, 26, 0.08);
+    padding: 10px 20px;
   }
   .nav-inner {
-    max-width: 1200px; margin: 0 auto;
+    max-width: 1100px; margin: 0 auto;
     display: flex; align-items: center; justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
   }
   .logo {
     display: flex; align-items: center; gap: 10px;
-    font-family: "Fraunces", serif; font-weight: 800; font-size: 1.4rem;
+    font-family: "Fraunces", serif; font-weight: 700; font-size: 1.3rem;
     text-decoration: none; color: var(--ink);
   }
   .logo .cat-logo {
-    width: 42px; height: 42px;
+    width: 36px; height: 36px;
     border-radius: 50%;
-    background: linear-gradient(160deg, var(--peach-1), var(--peach-3));
-    border: 2px solid var(--ink);
-    box-shadow: var(--shadow-hard);
-    padding: 4px;
-    transform: rotate(-4deg);
   }
-  .logo:hover .cat-logo { transform: rotate(6deg) scale(1.05); }
 
   .nav-links {
     display: flex; gap: 22px; align-items: center;
@@ -114,215 +114,141 @@
   }
   .nav-links a {
     color: var(--ink); text-decoration: none;
-    padding: 6px 0;
-    border-bottom: 2px solid transparent;
-    transition: border-color .2s;
+    font-size: 0.95rem;
+    opacity: 0.78;
+    transition: opacity .2s;
   }
-  .nav-links a:hover { border-bottom-color: var(--coral); }
+  .nav-links a:hover { opacity: 1; }
   .nav-cta {
     background: var(--ink);
     color: var(--cream) !important;
     padding: 8px 18px !important;
     border-radius: 999px;
-    border: 2px solid var(--ink) !important;
+    opacity: 1 !important;
+    font-weight: 600;
+    transition: background .2s ease;
   }
   .nav-cta:hover { background: var(--coral); }
 
-  /* Language toggle */
+  /* Language toggle — minimal text link */
   .lang-switch {
     display: inline-flex; align-items: center;
-    background: var(--paper);
-    border: 2px solid var(--ink);
-    border-radius: 999px;
-    padding: 3px;
-    box-shadow: 2px 2px 0 var(--ink);
-    overflow: hidden;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
   }
   .lang-switch button {
     background: transparent; border: none;
-    font-family: inherit; font-weight: 700; font-size: 0.78rem;
-    color: var(--ink);
-    padding: 5px 11px;
-    border-radius: 999px;
+    font-family: inherit; font-weight: 500; font-size: 0.85rem;
+    color: var(--ink-soft);
+    padding: 4px 2px;
     cursor: pointer;
-    transition: background .2s, color .2s;
+    transition: color .2s;
     line-height: 1;
+    opacity: 0.6;
   }
-  .lang-switch button.active { background: var(--ink); color: var(--cream); }
-  .lang-switch button:not(.active):hover { background: rgba(42, 31, 26, 0.08); }
+  .lang-switch button.active { color: var(--ink); opacity: 1; font-weight: 700; }
+  .lang-switch button:hover { color: var(--ink); opacity: 1; }
+  .lang-switch .divider { color: var(--ink-soft); opacity: 0.4; }
 
   @media (max-width: 720px) {
     .nav-links a:not(.nav-cta) { display: none; }
-    .nav-links { gap: 10px; }
+    .nav-links { gap: 12px; }
   }
   @media (max-width: 420px) {
-    .nav-cta { padding: 8px 14px !important; font-size: 0.85rem; }
-    .lang-switch button { padding: 5px 9px; font-size: 0.72rem; }
+    .nav-cta { padding: 7px 14px !important; font-size: 0.85rem; }
+    .logo { font-size: 1.15rem; }
+    .logo .cat-logo { width: 32px; height: 32px; }
   }
 
   /* ============== HERO — peach gradient (matches app splash) ============== */
   .hero {
     position: relative;
-    padding: 90px 24px 110px;
-    overflow: hidden;
-    background: linear-gradient(165deg,
-      var(--peach-1) 0%,
-      var(--peach-2) 45%,
-      var(--peach-3) 100%);
-    border-bottom: 2px solid var(--ink);
-  }
-  /* subtle grain over the gradient */
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.18) 1px, transparent 0);
-    background-size: 32px 32px;
-    pointer-events: none;
-    z-index: 0;
+    padding: 60px 24px 80px;
+    text-align: center;
   }
   .hero-inner {
-    position: relative; z-index: 1;
-    max-width: 1100px; margin: 0 auto;
-    display: grid; grid-template-columns: 1.1fr 1fr;
-    gap: 60px; align-items: center;
+    max-width: 720px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: center;
   }
-  @media (max-width: 880px) {
-    .hero-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  .hero-logo {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    margin-bottom: 28px;
+    box-shadow: 0 6px 20px rgba(42, 31, 26, 0.15);
   }
 
   .hero-badge {
     display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255, 251, 242, 0.85);
-    border: 2px solid var(--ink);
-    padding: 6px 14px; border-radius: 999px;
-    font-size: 0.85rem; font-weight: 500;
-    box-shadow: var(--shadow-hard);
-    margin-bottom: 24px;
-    backdrop-filter: blur(4px);
+    background: rgba(255, 251, 242, 0.6);
+    padding: 5px 14px; border-radius: 999px;
+    font-size: 0.78rem; font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
   .hero-badge .dot {
-    width: 8px; height: 8px; border-radius: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
     background: var(--turquoise);
-    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.3);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.3); }
-    50%      { box-shadow: 0 0 0 8px rgba(42, 157, 143, 0); }
+    box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.25);
   }
 
   h1.hero-title {
-    font-size: clamp(2.4rem, 6vw, 4.6rem);
+    font-size: clamp(2rem, 5.2vw, 3.6rem);
     margin-bottom: 20px;
     color: var(--ink);
+    line-height: 1.1;
   }
   h1.hero-title .accent {
-    color: var(--cream);
-    position: relative; display: inline-block;
-  }
-  h1.hero-title .accent::after {
-    content: ''; position: absolute;
-    bottom: 4px; left: -4px; right: -4px;
-    height: 14px; background: var(--ink);
-    z-index: -1; transform: skew(-8deg); opacity: 0.85;
-  }
-  .hero-emoji {
-    font-size: 2rem; display: inline-block;
-    animation: wiggle 3s ease-in-out infinite;
-  }
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(0); }
-    25%      { transform: rotate(8deg); }
-    75%      { transform: rotate(-8deg); }
+    color: var(--coral-deep);
+    font-style: italic;
   }
 
   .hero-sub {
-    font-size: 1.15rem;
-    color: var(--ink);
-    opacity: 0.85;
-    margin-bottom: 32px; max-width: 540px;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin-bottom: 36px;
+    max-width: 480px;
+    line-height: 1.6;
   }
-  @media (max-width: 880px) { .hero-sub { margin-inline: auto; } }
 
-  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
-  @media (max-width: 880px) { .cta-row { justify-content: center; } }
+  .cta-row {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    justify-content: center;
+  }
 
   .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 14px 26px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 32px;
     border-radius: 999px;
-    border: 2px solid var(--ink);
-    font-weight: 700; font-family: inherit; font-size: 1rem;
+    border: none;
+    font-weight: 600; font-family: inherit; font-size: 1rem;
     text-decoration: none; cursor: pointer;
-    transition: transform .15s ease, box-shadow .15s ease;
-    box-shadow: var(--shadow-hard);
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
   }
-  .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
-  .btn:active { transform: translate(2px, 2px); box-shadow: none; }
-  .btn-primary { background: var(--ink); color: var(--cream); }
-  .btn-primary:hover { background: var(--coral); }
-  .btn-secondary { background: var(--cream); color: var(--ink); }
-
-  /* ============== PHONE MOCKUP — splash screen replica ============== */
-  .phone-wrap { position: relative; display: flex; justify-content: center; }
-  .phone {
-    position: relative;
-    width: 280px; height: 580px;
+  .btn-primary {
     background: var(--ink);
-    border-radius: 42px; padding: 12px;
-    box-shadow: var(--shadow-hard), 0 30px 60px -10px rgba(42, 31, 26, 0.45);
-    transform: rotate(-3deg);
-    transition: transform .4s ease;
-  }
-  .phone:hover { transform: rotate(0); }
-  .phone-screen {
-    width: 100%; height: 100%;
-    /* Match the actual app splash gradient */
-    background: linear-gradient(165deg,
-      var(--peach-1) 0%,
-      var(--peach-2) 50%,
-      var(--peach-3) 100%);
-    border-radius: 30px;
-    overflow: hidden; position: relative;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 22px 18px;
-    text-align: center;
-  }
-  .phone-notch {
-    position: absolute; top: 12px; left: 50%;
-    transform: translateX(-50%);
-    width: 100px; height: 22px;
-    background: var(--ink);
-    border-radius: 0 0 14px 14px;
-    z-index: 2;
-  }
-  .phone-cat {
-    width: 100px; height: 100px;
-    margin-bottom: 18px;
-    filter: drop-shadow(0 4px 12px rgba(42, 31, 26, 0.15));
-    animation: cat-bob 4s ease-in-out infinite;
-  }
-  @keyframes cat-bob {
-    0%, 100% { transform: translateY(0) rotate(-3deg); }
-    50%      { transform: translateY(-6px) rotate(3deg); }
-  }
-  .phone-title {
-    font-family: "Fraunces", serif; font-weight: 800;
-    font-size: 2rem; color: var(--cream);
-    margin-bottom: 4px;
-    text-shadow: 0 2px 8px rgba(42, 31, 26, 0.15);
-  }
-  .phone-tag {
-    font-size: 0.95rem; color: var(--cream);
-    opacity: 0.9; margin-bottom: 28px;
-  }
-  .phone-loader {
-    display: flex; align-items: center; gap: 8px;
     color: var(--cream);
-    font-size: 0.9rem;
+    box-shadow: 0 6px 18px rgba(42, 31, 26, 0.2);
   }
-  .phone-loader .spinner {
+  .btn-primary:hover {
+    background: var(--coral);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(231, 111, 81, 0.3);
+  }
+  .btn-secondary {
+    background: rgba(255, 251, 242, 0.6);
+    color: var(--ink);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .btn-secondary:hover { background: var(--paper); }
+
+  /* Phone mockup removed â hero now logo-centric */
+  .phone-wrap, .phone, .phone-screen, .phone-notch, .phone-cat,
+  .phone-title, .phone-tag, .phone-loader, .float-deco { display: none !important; }
+  .phone-loader-hidden {
     width: 18px; height: 18px;
     border: 2.5px solid rgba(255, 244, 230, 0.4);
     border-top-color: var(--cream);
@@ -333,124 +259,109 @@
     to { transform: rotate(360deg); }
   }
 
-  .float-deco {
-    position: absolute; font-size: 2rem; z-index: 2; pointer-events: none;
-  }
-  .float-deco.d1 { top: 30px; right: -10px; animation: float 4s ease-in-out infinite; }
-  .float-deco.d2 { bottom: 80px; left: -20px; animation: float 5s ease-in-out infinite reverse; }
-  .float-deco.d3 { top: 200px; left: -30px; animation: float 6s ease-in-out infinite; }
-  @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50%      { transform: translateY(-14px) rotate(8deg); }
-  }
-
-  /* ============== SECTIONS ============== */
-  section.block { padding: 80px 24px; position: relative; }
-  .block-inner { max-width: 1100px; margin: 0 auto; }
+  /* ============== SECTIONS â transparent over body gradient ============== */
+  section.block { padding: 64px 24px; position: relative; }
+  .block-inner { max-width: 1000px; margin: 0 auto; text-align: center; }
 
   .eyebrow {
     display: inline-block;
-    font-size: 0.85rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.15em;
+    font-size: 0.78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
     color: var(--coral-deep);
     margin-bottom: 12px;
   }
   h2.section-title {
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    margin-bottom: 16px;
+    font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+    margin-bottom: 14px;
+    color: var(--ink);
   }
   .section-lead {
-    font-size: 1.1rem; color: var(--ink-soft);
-    max-width: 640px; margin-bottom: 48px;
+    font-size: 1rem; color: var(--ink-soft);
+    max-width: 560px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
   }
 
-  /* ============== FEATURES ============== */
-  .features-bg {
-    background: var(--paper);
-    border-bottom: 2px solid var(--ink);
-  }
+  /* ============== FEATURES â refined cards ============== */
+  .features-bg { background: transparent; }
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    text-align: start;
   }
   .feature {
-    background: var(--cream);
-    border: 2px solid var(--ink);
-    border-radius: 20px; padding: 28px 24px;
-    box-shadow: var(--shadow-hard);
+    background: rgba(255, 251, 242, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(42, 31, 26, 0.06);
+    border-radius: 18px; padding: 24px 22px;
     transition: transform .25s ease, box-shadow .25s ease;
   }
-  .feature:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--ink); }
+  .feature:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(42, 31, 26, 0.10);
+  }
   .feature-icon {
-    width: 56px; height: 56px;
-    border-radius: 16px;
+    width: 44px; height: 44px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.7rem; margin-bottom: 18px;
-    border: 2px solid var(--ink);
+    font-size: 1.3rem; margin-bottom: 14px;
   }
-  .feature:nth-child(1) .feature-icon { background: var(--coral); color: var(--cream); }
-  .feature:nth-child(2) .feature-icon { background: var(--saffron); }
-  .feature:nth-child(3) .feature-icon { background: var(--turquoise); color: var(--cream); }
-  .feature:nth-child(4) .feature-icon { background: var(--plum); color: var(--cream); }
-  .feature h3 { font-family: "Fraunces", serif; font-size: 1.25rem; margin-bottom: 8px; }
-  .feature p { color: var(--ink-soft); font-size: 0.95rem; }
+  .feature:nth-child(1) .feature-icon { background: rgba(231, 111, 81, 0.18); }
+  .feature:nth-child(2) .feature-icon { background: rgba(244, 162, 97, 0.22); }
+  .feature:nth-child(3) .feature-icon { background: rgba(42, 157, 143, 0.18); }
+  .feature:nth-child(4) .feature-icon { background: rgba(107, 45, 92, 0.15); }
+  .feature h3 { font-family: "Fraunces", serif; font-size: 1.15rem; margin-bottom: 6px; font-weight: 700; }
+  .feature p { color: var(--ink-soft); font-size: 0.92rem; line-height: 1.55; }
 
-  /* ============== ABOUT / STORY ============== */
+  /* ============== ABOUT / STORY â single centered column ============== */
   .about-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 48px; align-items: start;
+    display: flex; flex-direction: column;
+    gap: 32px;
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: start;
   }
-  @media (max-width: 880px) { .about-grid { grid-template-columns: 1fr; } }
-
-  .about-text p { margin-bottom: 18px; font-size: 1.05rem; }
-  .about-text p:first-of-type::first-letter {
-    font-family: "Fraunces", serif;
-    font-size: 3.4rem; font-weight: 800;
-    line-height: 0.9;
-    margin-top: 4px;
-    color: var(--coral);
-  }
-  html[lang="he"] .about-text p:first-of-type::first-letter { float: right; margin-left: 8px; }
-  html[lang="en"] .about-text p:first-of-type::first-letter { float: left;  margin-right: 8px; }
+  .about-text p { margin-bottom: 16px; font-size: 1rem; line-height: 1.7; color: var(--ink-soft); }
 
   .story-card {
-    background: var(--ink); color: var(--cream);
-    border-radius: 24px; padding: 36px 32px;
+    background: rgba(42, 31, 26, 0.92);
+    color: var(--cream);
+    border-radius: 20px; padding: 28px 28px;
     position: relative; overflow: hidden;
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 8px 24px rgba(42, 31, 26, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   .story-card .story-cat {
-    position: absolute; top: -18px; left: -18px;
+    position: absolute; top: -24px; left: -24px;
     width: 130px; height: 130px;
-    opacity: 0.12;
-    transform: rotate(-15deg);
+    opacity: 0.10;
     pointer-events: none;
+    object-fit: contain;
   }
   .story-card h3 {
     font-family: "Fraunces", serif;
-    font-size: 1.5rem; margin-bottom: 12px;
+    font-size: 1.3rem; margin-bottom: 12px;
     color: var(--saffron);
     position: relative; z-index: 1;
   }
-  .story-card p { font-size: 1rem; line-height: 1.7; opacity: 0.95; position: relative; z-index: 1; }
+  .story-card p { font-size: 0.98rem; line-height: 1.7; opacity: 0.95; position: relative; z-index: 1; }
   .story-card .signature {
-    margin-top: 24px; padding-top: 18px;
-    border-top: 1px solid rgba(255, 244, 230, 0.2);
+    margin-top: 22px; padding-top: 16px;
+    border-top: 1px solid rgba(255, 244, 230, 0.15);
     font-family: "Fraunces", serif;
-    font-style: italic; font-size: 0.95rem; opacity: 0.8;
+    font-style: italic; font-size: 0.92rem; opacity: 0.75;
     position: relative; z-index: 1;
   }
 
-  /* ============== SCREENSHOTS ============== */
-  .screens-bg {
-    background: linear-gradient(180deg, var(--cream) 0%, var(--peach-3) 100%);
-    border-top: 2px solid var(--ink);
-  }
+  /* ============== SCREENSHOTS â refined, no tilts ============== */
+  .screens-bg { background: transparent; }
   .screens-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 32px 22px; margin-top: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 28px 18px; margin-top: 8px;
   }
   .screen-item {
     display: flex;
@@ -462,18 +373,15 @@
     width: 100%;
     aspect-ratio: 9 / 19.5;
     background: var(--ink);
-    border-radius: 28px; padding: 6px;
-    box-shadow: var(--shadow-hard);
-    transition: transform .3s ease;
+    border-radius: 26px; padding: 5px;
+    box-shadow: 0 12px 32px rgba(42, 31, 26, 0.18);
+    transition: transform .3s ease, box-shadow .3s ease;
     position: relative;
   }
-  /* Subtle alternating tilt — first 5 screens get individual rotations */
-  .screen-item:nth-child(5n+1) .screen-frame { transform: rotate(-2deg); }
-  .screen-item:nth-child(5n+2) .screen-frame { transform: rotate(1.5deg); }
-  .screen-item:nth-child(5n+3) .screen-frame { transform: rotate(-1deg); }
-  .screen-item:nth-child(5n+4) .screen-frame { transform: rotate(2deg); }
-  .screen-item:nth-child(5n+5) .screen-frame { transform: rotate(-1.5deg); }
-  .screen-item:hover .screen-frame { transform: rotate(0) translateY(-6px); }
+  .screen-item:hover .screen-frame {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(42, 31, 26, 0.22);
+  }
   .screen-frame img {
     width: 100%; height: 100%;
     object-fit: cover; border-radius: 22px;
@@ -521,34 +429,25 @@
     line-height: 1.4;
   }
 
-  /* ============== CTA STRIP ============== */
+  /* ============== CTA STRIP â refined ============== */
   .cta-strip {
-    background: linear-gradient(135deg, var(--coral) 0%, var(--peach-1) 100%);
-    color: var(--cream);
-    border-top: 2px solid var(--ink);
-    border-bottom: 2px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
     text-align: center;
-    padding: 64px 24px;
-    position: relative; overflow: hidden;
+    padding: 56px 24px 80px;
+    position: relative;
   }
-  .cta-strip::before, .cta-strip::after {
-    content: '🍜🏛️🎭🐾☕🛕🎨🏪';
-    position: absolute;
-    font-size: 2.5rem; opacity: 0.15;
-    white-space: nowrap; letter-spacing: 20px;
-  }
-  .cta-strip::before { top: 14px; left: -50px; }
-  .cta-strip::after  { bottom: 14px; right: -50px; }
   .cta-strip h2 {
     font-family: "Fraunces", serif;
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    margin-bottom: 14px;
-    position: relative; z-index: 1;
+    font-size: clamp(1.6rem, 3.6vw, 2.2rem);
+    margin-bottom: 12px;
+    color: var(--ink);
   }
-  .cta-strip p { margin-bottom: 28px; opacity: 0.95; position: relative; z-index: 1; }
-  .cta-strip .btn { position: relative; z-index: 1; }
-  .cta-strip .btn-primary { background: var(--cream); color: var(--ink); }
-  .cta-strip .btn-primary:hover { background: var(--paper); }
+  .cta-strip p {
+    margin-bottom: 26px;
+    color: var(--ink-soft);
+    font-size: 1rem;
+  }
 
   /* ============== FOOTER ============== */
   footer {
@@ -562,11 +461,7 @@
   }
   @media (max-width: 720px) { .footer-inner { grid-template-columns: 1fr; } }
   .footer-brand .logo { color: var(--cream); }
-  .footer-brand .logo .cat-logo {
-    background: linear-gradient(160deg, var(--peach-1), var(--peach-3));
-    border-color: var(--cream);
-    box-shadow: 3px 3px 0 var(--cream);
-  }
+  .footer-brand .logo .cat-logo { background: var(--cream); }
   footer h4 {
     font-family: "Fraunces", serif;
     font-size: 1.1rem; margin-bottom: 14px;
@@ -669,7 +564,7 @@
 <nav>
   <div class="nav-inner">
     <a href="#" class="logo">
-      <span class="cat-logo"><svg><use href="#foufou-cat"/></svg></span>
+      <img class="cat-logo" src="icons/foufou-180.png" alt="FouFou" />
       <span>FouFou</span>
     </a>
     <div class="nav-links">
@@ -682,13 +577,9 @@
 
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-set-lang="he" class="active">עב</button>
+        <span class="divider">·</span>
         <button type="button" data-set-lang="en">EN</button>
       </div>
-
-      <a class="nav-cta" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
-        <span data-lang-he>פתח אפליקציה →</span>
-        <span data-lang-en>Open App →</span>
-      </a>
     </div>
   </div>
 </nav>
@@ -696,70 +587,39 @@
 <!-- ============= HERO ============= -->
 <header class="hero">
   <div class="hero-inner">
-    <div class="hero-text">
-      <span class="hero-badge">
-        <span class="dot"></span>
-        <span>City Trail Generator</span>
-        <span>·</span>
-        <span>v3.23.59</span>
-      </span>
+    <img class="hero-logo" src="icons/foufou-180.png" alt="FouFou" />
 
-      <h1 class="display hero-title" data-lang-he>
-        מסלולים בעיר, <br />
-        <span class="accent">בלי בלגן</span>.<br />
-        <span class="hero-emoji">🍜</span>
-        <span class="hero-emoji" style="animation-delay:.5s">🏛️</span>
-        <span class="hero-emoji" style="animation-delay:1s">🎭</span>
-      </h1>
-      <h1 class="display hero-title" data-lang-en>
-        City trails, <br />
-        <span class="accent">made personal</span>.<br />
-        <span class="hero-emoji">🍜</span>
-        <span class="hero-emoji" style="animation-delay:.5s">🏛️</span>
-        <span class="hero-emoji" style="animation-delay:1s">🎭</span>
-      </h1>
+    <span class="hero-badge">
+      <span class="dot"></span>
+      <span>City Trail Generator</span>
+      <span>·</span>
+      <span>v3.23.59</span>
+    </span>
 
-      <p class="hero-sub" data-lang-he>
-        פופו עוזר לחברים שבאים לבקר להתנהל בעיר עצמאית — עם הידע
-        שצברנו לאורך שנים. הטוב משני העולמות: המלצות אישיות + ניווט גוגל.
-      </p>
-      <p class="hero-sub" data-lang-en>
-        FouFou helps visiting friends explore a city on their own — armed with
-        the knowledge we've gathered over the years. The best of both worlds:
-        personal recommendations + Google navigation.
-      </p>
+    <h1 class="display hero-title" data-lang-he>
+      מסלולים בעיר,<br />
+      <span class="accent">בלי בלגן</span>
+    </h1>
+    <h1 class="display hero-title" data-lang-en>
+      City trails,<br />
+      <span class="accent">made personal</span>
+    </h1>
 
-      <div class="cta-row">
-        <a class="btn btn-primary" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
-          <span data-lang-he>🚀 פתח את האפליקציה</span>
-          <span data-lang-en>🚀 Open the App</span>
-        </a>
-        <a class="btn btn-secondary" href="#about">
-          <span data-lang-he>איך זה עובד?</span>
-          <span data-lang-en>How does it work?</span>
-        </a>
-      </div>
-    </div>
+    <p class="hero-sub" data-lang-he>
+      פופו עוזר לחברים שבאים לבקר להתנהל בעיר עצמאית — עם הידע
+      שצברנו לאורך שנים. הטוב משני העולמות: המלצות אישיות + ניווט גוגל.
+    </p>
+    <p class="hero-sub" data-lang-en>
+      FouFou helps visiting friends explore a city on their own — armed with
+      the knowledge we've gathered over the years. The best of both worlds:
+      personal recommendations + Google navigation.
+    </p>
 
-    <div class="phone-wrap">
-      <span class="float-deco d1">☕</span>
-      <span class="float-deco d2">🛕</span>
-      <span class="float-deco d3">🎨</span>
-      <div class="phone">
-        <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="phone-cat">
-            <svg viewBox="0 0 100 100" width="100%" height="100%"><use href="#foufou-cat"/></svg>
-          </div>
-          <div class="phone-title">FouFou</div>
-          <div class="phone-tag">City Trail Generator 🍜🏛️🎭</div>
-          <div class="phone-loader">
-            <div class="spinner"></div>
-            <span data-lang-he>⏳ טוען...</span>
-            <span data-lang-en>⏳ Loading...</span>
-          </div>
-        </div>
-      </div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
+        <span data-lang-he>פתח את האפליקציה</span>
+        <span data-lang-en>Open the App</span>
+      </a>
     </div>
   </div>
 </header>
@@ -870,7 +730,7 @@
       </div>
 
       <aside class="story-card" data-lang-he>
-        <svg class="story-cat" viewBox="0 0 100 100"><use href="#foufou-cat"/></svg>
+        <img class="story-cat" src="icons/foufou-512.png" alt="" />
         <h3>למה השם פופו? 🐾</h3>
         <p>
           היה לנו פעם חתול חמוד וסקרן בשם פופו. בצרפתית, "פופו" זה גם
@@ -884,7 +744,7 @@
       </aside>
 
       <aside class="story-card" data-lang-en>
-        <svg class="story-cat" viewBox="0 0 100 100"><use href="#foufou-cat"/></svg>
+        <img class="story-cat" src="icons/foufou-512.png" alt="" />
         <h3>Why "FouFou"? 🐾</h3>
         <p>
           We once had a cute and curious cat named FouFou. In French, "fou-fou"
@@ -999,8 +859,8 @@
   <p data-lang-en>FouFou runs straight from your browser. No download, no signup.</p>
 
   <a class="btn btn-primary" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
-    <span data-lang-he>🐾 פתח את פופו</span>
-    <span data-lang-en>🐾 Open FouFou</span>
+    <span data-lang-he>פתח את פופו</span>
+    <span data-lang-en>Open FouFou</span>
   </a>
 </section>
 
@@ -1009,7 +869,7 @@
   <div class="footer-inner">
     <div class="footer-brand">
       <div class="logo">
-        <span class="cat-logo"><svg><use href="#foufou-cat"/></svg></span>
+        <img class="cat-logo" src="icons/foufou-180.png" alt="FouFou" />
         <span>FouFou</span>
       </div>
       <p class="footer-tagline" data-lang-he>
