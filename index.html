@@ -161,21 +161,75 @@
     .logo .cat-logo { width: 32px; height: 32px; }
   }
 
-  /* ============== HERO — peach gradient (matches app splash) ============== */
+  /* ============== HERO — animated cat as launcher ============== */
   .hero {
     position: relative;
-    padding: 60px 24px 80px;
+    padding: 50px 24px 70px;
     text-align: center;
   }
   .hero-inner {
     max-width: 720px; margin: 0 auto;
     display: flex; flex-direction: column; align-items: center;
   }
-  .hero-logo {
-    width: 96px; height: 96px;
+
+  /* Animated cat (clickable to launch app) */
+  .hero-cat-link {
+    display: inline-block;
+    margin-bottom: 14px;
     border-radius: 50%;
-    margin-bottom: 28px;
-    box-shadow: 0 6px 20px rgba(42, 31, 26, 0.15);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .hero-cat-link:hover { transform: scale(1.06); }
+  .hero-cat-link:active { transform: scale(0.98); }
+  .hero-cat-svg {
+    width: 150px; height: 150px;
+    filter: drop-shadow(0 8px 22px rgba(42, 31, 26, 0.18));
+  }
+  @media (max-width: 480px) {
+    .hero-cat-svg { width: 130px; height: 130px; }
+  }
+
+  /* Click-to-launch hint pill (with bouncing arrow) */
+  .hero-click-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 14px rgba(42, 31, 26, 0.18);
+    text-decoration: none;
+  }
+  .hero-click-hint:hover { background: var(--coral); }
+  .hero-click-hint .arrow {
+    display: inline-block;
+    font-size: 1rem;
+    animation: bounce-arrow 1.4s ease-in-out infinite;
+  }
+  @keyframes bounce-arrow {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+
+  /* App splash cat animations (copied from FouFou app) */
+  @keyframes catBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes glassesUp { 0%,70% { transform: translateY(0); } 80% { transform: translateY(-7px); } 92%,100% { transform: translateY(0); } }
+  @keyframes winkRight { 0%,82% { transform: scaleY(1); } 87% { transform: scaleY(0.1); } 92%,100% { transform: scaleY(1); } }
+  @keyframes tailWag { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(12deg); } 75% { transform: rotate(-8deg); } }
+
+  /* Cities-available line under hero */
+  .hero-cities {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin-top: 14px;
+    font-style: italic;
+    opacity: 0.9;
   }
 
   .hero-badge {
@@ -587,40 +641,69 @@
 <!-- ============= HERO ============= -->
 <header class="hero">
   <div class="hero-inner">
-    <img class="hero-logo" src="icons/foufou-180.png" alt="FouFou" />
 
-    <span class="hero-badge">
-      <span class="dot"></span>
-      <span>City Trail Generator</span>
-      <span>·</span>
-      <span>v3.23.59</span>
-    </span>
+    <!-- Animated cat (clickable, links to app) — same animation as the app's splash -->
+    <a href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener" class="hero-cat-link" aria-label="Launch FouFou">
+      <svg class="hero-cat-svg" viewBox="0 0 200 200">
+        <g style="animation:catBounce 2s ease-in-out infinite">
+          <!-- Face -->
+          <circle cx="100" cy="108" r="52" fill="#FFE8D6"/>
+          <!-- Ears outer -->
+          <polygon points="62,72 50,28 82,58" fill="#FFE8D6"/>
+          <polygon points="138,72 150,28 118,58" fill="#FFE8D6"/>
+          <!-- Ears inner -->
+          <polygon points="64,70 54,34 80,58" fill="#FFCBA4"/>
+          <polygon points="136,70 146,34 120,58" fill="#FFCBA4"/>
+          <!-- Eyes (visible when glasses peek up) -->
+          <circle cx="81" cy="103" r="4" fill="#5D4037" opacity="0.4"/>
+          <circle cx="119" cy="103" r="4" fill="#5D4037" opacity="0.4"/>
+          <circle cx="82" cy="102" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="120" cy="102" r="1.5" fill="white" opacity="0.4"/>
+          <!-- Sunglasses (peek-up animation) -->
+          <g style="animation:glassesUp 3.5s ease-in-out infinite;transform-origin:100px 100px">
+            <rect x="68" y="94" width="26" height="19" rx="6" fill="#2D2D2D" opacity="0.92"/>
+            <g style="animation:winkRight 4.5s ease-in-out infinite;transform-origin:119px 103px">
+              <rect x="106" y="94" width="26" height="19" rx="6" fill="#2D2D2D" opacity="0.92"/>
+            </g>
+            <line x1="94" y1="103" x2="106" y2="103" stroke="#2D2D2D" stroke-width="3"/>
+            <line x1="68" y1="100" x2="56" y2="95" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="132" y1="100" x2="144" y2="95" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+          <!-- Nose -->
+          <path d="M95,120 L100,125 L105,120 Z" fill="#FF8C94"/>
+          <!-- Mouth -->
+          <path d="M90,130 Q100,138 110,130" fill="none" stroke="#8B6F5E" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Tail (wags) -->
+          <g style="animation:tailWag 1s ease-in-out infinite;transform-origin:148px 145px">
+            <path d="M148,140 Q170,125 165,100" fill="none" stroke="#FFE8D6" stroke-width="10" stroke-linecap="round"/>
+          </g>
+        </g>
+      </svg>
+    </a>
 
-    <h1 class="display hero-title" data-lang-he>
-      מסלולים בעיר,<br />
-      <span class="accent">בלי בלגן</span>
-    </h1>
-    <h1 class="display hero-title" data-lang-en>
-      City trails,<br />
-      <span class="accent">made personal</span>
-    </h1>
+    <!-- Click-to-launch hint with bouncing arrow -->
+    <a href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener" class="hero-click-hint">
+      <span class="arrow">↑</span>
+      <span data-lang-he>לחצו על פופו לפתיחת האפליקציה</span>
+      <span data-lang-en>Click FouFou to launch the app</span>
+    </a>
+
+    <h1 class="display hero-title" data-lang-he>יצירת מסלולי טיול עירוניים</h1>
+    <h1 class="display hero-title" data-lang-en>Plan your city trail</h1>
 
     <p class="hero-sub" data-lang-he>
-      פופו עוזר לחברים שבאים לבקר להתנהל בעיר עצמאית — עם הידע
-      שצברנו לאורך שנים. הטוב משני העולמות: המלצות אישיות + ניווט גוגל.
+      מערכת שמאפשרת לתיירים לתכנן טיול בעיר בקלות וללא הכנה מוקדמת.
     </p>
     <p class="hero-sub" data-lang-en>
-      FouFou helps visiting friends explore a city on their own — armed with
-      the knowledge we've gathered over the years. The best of both worlds:
-      personal recommendations + Google navigation.
+      Lets tourists plan a city trip easily — no prep required.
     </p>
 
-    <div class="cta-row">
-      <a class="btn btn-primary" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
-        <span data-lang-he>פתח את האפליקציה</span>
-        <span data-lang-en>Open the App</span>
-      </a>
-    </div>
+    <p class="hero-cities" data-lang-he>
+      כרגע זמין בבנקוק, סינגפור, תל אביב ומלגה.
+    </p>
+    <p class="hero-cities" data-lang-en>
+      Currently available in Bangkok, Singapore, Tel Aviv, and Málaga.
+    </p>
   </div>
 </header>
 
@@ -779,72 +862,58 @@
     <div class="screens-grid">
       <div class="screen-item">
         <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/01-topics-he.jpg" alt="בחירת תחומי עניין" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/01-topics.jpg" alt="Choose topics" loading="lazy" />
+          <img class="screen-img" data-lang-he src="screens/01-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/01.jpg" alt="" loading="lazy" />
         </div>
-        <div class="screen-caption">
-          <div class="step">1</div>
-          <div class="label" data-lang-he>בחירת תחומי עניין</div>
-          <div class="label" data-lang-en>Pick your topics</div>
-          <div class="desc" data-lang-he>תרבות, אוכל, דת, קניות — בוחרים מה מעניין.</div>
-          <div class="desc" data-lang-en>Culture, food, religion, shopping — pick what matters.</div>
-        </div>
+        <div class="screen-caption"><div class="step">1</div></div>
       </div>
 
       <div class="screen-item">
         <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/02-area-he.jpg" alt="בחירת אזור" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/02-area.jpg" alt="Choose area" loading="lazy" />
+          <img class="screen-img" data-lang-he src="screens/02-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/02.jpg" alt="" loading="lazy" />
         </div>
-        <div class="screen-caption">
-          <div class="step">2</div>
-          <div class="label" data-lang-he>בוחרים אזור</div>
-          <div class="label" data-lang-en>Choose an area</div>
-          <div class="desc" data-lang-he>שכונה, מקום ספציפי, או "קרוב אליי".</div>
-          <div class="desc" data-lang-en>A neighborhood, a place, or "near me".</div>
-        </div>
+        <div class="screen-caption"><div class="step">2</div></div>
       </div>
 
       <div class="screen-item">
         <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/03-trail-he.jpg" alt="מסלול פעיל" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/03-trail.jpg" alt="Active trail" loading="lazy" />
+          <img class="screen-img" data-lang-he src="screens/03-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/03.jpg" alt="" loading="lazy" />
         </div>
-        <div class="screen-caption">
-          <div class="step">3</div>
-          <div class="label" data-lang-he>מסלול פעיל</div>
-          <div class="label" data-lang-en>Active trail</div>
-          <div class="desc" data-lang-he>עצירות בסדר חכם, דירוגים, וכפתור "איפה אני?".</div>
-          <div class="desc" data-lang-en>Stops in smart order, ratings, and a "Where am I?" button.</div>
-        </div>
+        <div class="screen-caption"><div class="step">3</div></div>
       </div>
 
       <div class="screen-item">
         <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/04-map-he.jpg" alt="מפת מועדפים" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/04-map.jpg" alt="Favorites map" loading="lazy" />
+          <img class="screen-img" data-lang-he src="screens/04-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/04.jpg" alt="" loading="lazy" />
         </div>
-        <div class="screen-caption">
-          <div class="step">4</div>
-          <div class="label" data-lang-he>מפת מועדפים</div>
-          <div class="label" data-lang-en>Favorites map</div>
-          <div class="desc" data-lang-he>כל המקומות שאהבת, מסונן לפי תחום.</div>
-          <div class="desc" data-lang-en>All your saved places, filtered by topic.</div>
-        </div>
+        <div class="screen-caption"><div class="step">4</div></div>
       </div>
 
       <div class="screen-item">
         <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/05-place-he.jpg" alt="רשימת מקומות" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/05-place.jpg" alt="Place details" loading="lazy" />
+          <img class="screen-img" data-lang-he src="screens/05-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/05.jpg" alt="" loading="lazy" />
         </div>
-        <div class="screen-caption">
-          <div class="step">5</div>
-          <div class="label" data-lang-he>פרטי מקום</div>
-          <div class="label" data-lang-en>Place details</div>
-          <div class="desc" data-lang-he>תיאור אישי, טיפים פנימיים, וניווט בלחיצה.</div>
-          <div class="desc" data-lang-en>Personal description, insider tips, one-tap nav.</div>
+        <div class="screen-caption"><div class="step">5</div></div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/06-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/06.jpg" alt="" loading="lazy" />
         </div>
+        <div class="screen-caption"><div class="step">6</div></div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/07-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/07.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="screen-caption"><div class="step">7</div></div>
       </div>
     </div>
   </div>
@@ -906,8 +975,8 @@
   </div>
 
   <div class="footer-bottom">
-    <span data-lang-he>© 2026 Eitan Fisher · נתוני מקומות מסופקים על ידי Google Places API</span>
-    <span data-lang-en>© 2026 Eitan Fisher · Place data provided by Google Places API</span>
+    <span data-lang-he>© 2026 Eitan Fisher · נתוני מקומות מסופקים על ידי Google Places API · v3.23.59</span>
+    <span data-lang-en>© 2026 Eitan Fisher · Place data provided by Google Places API · v3.23.59</span>
   </div>
 </footer>
 
