@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FouFou — City Trail Generator 🍜🏛️🎭</title>
+<meta name="description" content="FouFou — a personal city-trail generator. Local knowledge + Google navigation." />
+<meta name="theme-color" content="#F5946B" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="FouFou — City Trail Generator" />
+<meta property="og:description" content="🍜🏛️🎭 A personal city-trail generator. The best of both worlds — local knowledge + Google navigation." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://foufou.city/" />
+
+<!-- Inline SVG favicon (the FouFou cat) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='52' r='34' fill='%23FBE3CE'/><polygon points='22,30 30,18 38,32' fill='%23FBE3CE'/><polygon points='62,32 70,18 78,30' fill='%23FBE3CE'/><rect x='28' y='48' width='18' height='9' rx='3' fill='%23222'/><rect x='54' y='48' width='18' height='9' rx='3' fill='%23222'/><rect x='44' y='51' width='12' height='2.5' fill='%23222'/><circle cx='50' cy='65' r='1.8' fill='%23E58D7A'/><path d='M50 67 Q44 73 40 70 M50 67 Q56 73 60 70' stroke='%23222' stroke-width='2' fill='none' stroke-linecap='round'/></svg>" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,600&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================
+     FouFou Landing — Brand-aligned with the app
+     Peach/coral gradient palette from the splash
+     ============================================ */
+
+  :root {
+    /* Brand palette — pulled from the app's splash/loading screen */
+    --peach-1:    #F5946B;   /* deep peach (top of splash) */
+    --peach-2:    #F8B287;   /* mid peach */
+    --peach-3:    #FBD9B4;   /* light apricot (bottom of splash) */
+    --coral:      #E76F51;   /* primary CTA */
+    --coral-deep: #D14B30;
+    --saffron:    #F4A261;
+    --turquoise:  #2A9D8F;
+    --plum:       #6B2D5C;
+    --cream:      #FFF4E6;   /* warm off-white */
+    --paper:      #FFFBF2;
+    --ink:        #2A1F1A;   /* warm dark brown-black */
+    --ink-soft:   #5C4A41;
+
+    --shadow-hard: 4px 4px 0 var(--ink);
+    --shadow-soft: 0 12px 40px rgba(42, 31, 26, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Heebo", system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.65;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(42, 31, 26, 0.04) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  html[lang="en"] body { font-family: "Fraunces", "Heebo", serif; direction: ltr; text-align: left; }
+  html[lang="en"] { direction: ltr; }
+
+  .display {
+    font-family: "Fraunces", "Heebo", serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* ============== CAT LOGO (reusable inline SVG) ============== */
+  .cat-logo {
+    display: inline-block;
+    flex-shrink: 0;
+    transition: transform .3s ease;
+  }
+  .cat-logo svg { display: block; width: 100%; height: 100%; }
+
+  /* ============== NAV ============== */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255, 244, 230, 0.88);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--ink);
+    padding: 12px 24px;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: "Fraunces", serif; font-weight: 800; font-size: 1.4rem;
+    text-decoration: none; color: var(--ink);
+  }
+  .logo .cat-logo {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, var(--peach-1), var(--peach-3));
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow-hard);
+    padding: 4px;
+    transform: rotate(-4deg);
+  }
+  .logo:hover .cat-logo { transform: rotate(6deg) scale(1.05); }
+
+  .nav-links {
+    display: flex; gap: 22px; align-items: center;
+    font-weight: 500;
+  }
+  .nav-links a {
+    color: var(--ink); text-decoration: none;
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color .2s;
+  }
+  .nav-links a:hover { border-bottom-color: var(--coral); }
+  .nav-cta {
+    background: var(--ink);
+    color: var(--cream) !important;
+    padding: 8px 18px !important;
+    border-radius: 999px;
+    border: 2px solid var(--ink) !important;
+  }
+  .nav-cta:hover { background: var(--coral); }
+
+  /* Language toggle */
+  .lang-switch {
+    display: inline-flex; align-items: center;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: 2px 2px 0 var(--ink);
+    overflow: hidden;
+  }
+  .lang-switch button {
+    background: transparent; border: none;
+    font-family: inherit; font-weight: 700; font-size: 0.78rem;
+    color: var(--ink);
+    padding: 5px 11px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    line-height: 1;
+  }
+  .lang-switch button.active { background: var(--ink); color: var(--cream); }
+  .lang-switch button:not(.active):hover { background: rgba(42, 31, 26, 0.08); }
+
+  @media (max-width: 720px) {
+    .nav-links a:not(.nav-cta) { display: none; }
+    .nav-links { gap: 10px; }
+  }
+  @media (max-width: 420px) {
+    .nav-cta { padding: 8px 14px !important; font-size: 0.85rem; }
+    .lang-switch button { padding: 5px 9px; font-size: 0.72rem; }
+  }
+
+  /* ============== HERO — peach gradient (matches app splash) ============== */
+  .hero {
+    position: relative;
+    padding: 90px 24px 110px;
+    overflow: hidden;
+    background: linear-gradient(165deg,
+      var(--peach-1) 0%,
+      var(--peach-2) 45%,
+      var(--peach-3) 100%);
+    border-bottom: 2px solid var(--ink);
+  }
+  /* subtle grain over the gradient */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.18) 1px, transparent 0);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-inner {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: 60px; align-items: center;
+  }
+  @media (max-width: 880px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255, 251, 242, 0.85);
+    border: 2px solid var(--ink);
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 0.85rem; font-weight: 500;
+    box-shadow: var(--shadow-hard);
+    margin-bottom: 24px;
+    backdrop-filter: blur(4px);
+  }
+  .hero-badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--turquoise);
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.3); }
+    50%      { box-shadow: 0 0 0 8px rgba(42, 157, 143, 0); }
+  }
+
+  h1.hero-title {
+    font-size: clamp(2.4rem, 6vw, 4.6rem);
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  h1.hero-title .accent {
+    color: var(--cream);
+    position: relative; display: inline-block;
+  }
+  h1.hero-title .accent::after {
+    content: ''; position: absolute;
+    bottom: 4px; left: -4px; right: -4px;
+    height: 14px; background: var(--ink);
+    z-index: -1; transform: skew(-8deg); opacity: 0.85;
+  }
+  .hero-emoji {
+    font-size: 2rem; display: inline-block;
+    animation: wiggle 3s ease-in-out infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    25%      { transform: rotate(8deg); }
+    75%      { transform: rotate(-8deg); }
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--ink);
+    opacity: 0.85;
+    margin-bottom: 32px; max-width: 540px;
+  }
+  @media (max-width: 880px) { .hero-sub { margin-inline: auto; } }
+
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
+  @media (max-width: 880px) { .cta-row { justify-content: center; } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    font-weight: 700; font-family: inherit; font-size: 1rem;
+    text-decoration: none; cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+    box-shadow: var(--shadow-hard);
+  }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: none; }
+  .btn-primary { background: var(--ink); color: var(--cream); }
+  .btn-primary:hover { background: var(--coral); }
+  .btn-secondary { background: var(--cream); color: var(--ink); }
+
+  /* ============== PHONE MOCKUP — splash screen replica ============== */
+  .phone-wrap { position: relative; display: flex; justify-content: center; }
+  .phone {
+    position: relative;
+    width: 280px; height: 580px;
+    background: var(--ink);
+    border-radius: 42px; padding: 12px;
+    box-shadow: var(--shadow-hard), 0 30px 60px -10px rgba(42, 31, 26, 0.45);
+    transform: rotate(-3deg);
+    transition: transform .4s ease;
+  }
+  .phone:hover { transform: rotate(0); }
+  .phone-screen {
+    width: 100%; height: 100%;
+    /* Match the actual app splash gradient */
+    background: linear-gradient(165deg,
+      var(--peach-1) 0%,
+      var(--peach-2) 50%,
+      var(--peach-3) 100%);
+    border-radius: 30px;
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 22px 18px;
+    text-align: center;
+  }
+  .phone-notch {
+    position: absolute; top: 12px; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 22px;
+    background: var(--ink);
+    border-radius: 0 0 14px 14px;
+    z-index: 2;
+  }
+  .phone-cat {
+    width: 100px; height: 100px;
+    margin-bottom: 18px;
+    filter: drop-shadow(0 4px 12px rgba(42, 31, 26, 0.15));
+    animation: cat-bob 4s ease-in-out infinite;
+  }
+  @keyframes cat-bob {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50%      { transform: translateY(-6px) rotate(3deg); }
+  }
+  .phone-title {
+    font-family: "Fraunces", serif; font-weight: 800;
+    font-size: 2rem; color: var(--cream);
+    margin-bottom: 4px;
+    text-shadow: 0 2px 8px rgba(42, 31, 26, 0.15);
+  }
+  .phone-tag {
+    font-size: 0.95rem; color: var(--cream);
+    opacity: 0.9; margin-bottom: 28px;
+  }
+  .phone-loader {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--cream);
+    font-size: 0.9rem;
+  }
+  .phone-loader .spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255, 244, 230, 0.4);
+    border-top-color: var(--cream);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .float-deco {
+    position: absolute; font-size: 2rem; z-index: 2; pointer-events: none;
+  }
+  .float-deco.d1 { top: 30px; right: -10px; animation: float 4s ease-in-out infinite; }
+  .float-deco.d2 { bottom: 80px; left: -20px; animation: float 5s ease-in-out infinite reverse; }
+  .float-deco.d3 { top: 200px; left: -30px; animation: float 6s ease-in-out infinite; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50%      { transform: translateY(-14px) rotate(8deg); }
+  }
+
+  /* ============== SECTIONS ============== */
+  section.block { padding: 80px 24px; position: relative; }
+  .block-inner { max-width: 1100px; margin: 0 auto; }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.85rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--coral-deep);
+    margin-bottom: 12px;
+  }
+  h2.section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 16px;
+  }
+  .section-lead {
+    font-size: 1.1rem; color: var(--ink-soft);
+    max-width: 640px; margin-bottom: 48px;
+  }
+
+  /* ============== FEATURES ============== */
+  .features-bg {
+    background: var(--paper);
+    border-bottom: 2px solid var(--ink);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .feature {
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    border-radius: 20px; padding: 28px 24px;
+    box-shadow: var(--shadow-hard);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .feature:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--ink); }
+  .feature-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; margin-bottom: 18px;
+    border: 2px solid var(--ink);
+  }
+  .feature:nth-child(1) .feature-icon { background: var(--coral); color: var(--cream); }
+  .feature:nth-child(2) .feature-icon { background: var(--saffron); }
+  .feature:nth-child(3) .feature-icon { background: var(--turquoise); color: var(--cream); }
+  .feature:nth-child(4) .feature-icon { background: var(--plum); color: var(--cream); }
+  .feature h3 { font-family: "Fraunces", serif; font-size: 1.25rem; margin-bottom: 8px; }
+  .feature p { color: var(--ink-soft); font-size: 0.95rem; }
+
+  /* ============== ABOUT / STORY ============== */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: start;
+  }
+  @media (max-width: 880px) { .about-grid { grid-template-columns: 1fr; } }
+
+  .about-text p { margin-bottom: 18px; font-size: 1.05rem; }
+  .about-text p:first-of-type::first-letter {
+    font-family: "Fraunces", serif;
+    font-size: 3.4rem; font-weight: 800;
+    line-height: 0.9;
+    margin-top: 4px;
+    color: var(--coral);
+  }
+  html[lang="he"] .about-text p:first-of-type::first-letter { float: right; margin-left: 8px; }
+  html[lang="en"] .about-text p:first-of-type::first-letter { float: left;  margin-right: 8px; }
+
+  .story-card {
+    background: var(--ink); color: var(--cream);
+    border-radius: 24px; padding: 36px 32px;
+    position: relative; overflow: hidden;
+    box-shadow: var(--shadow-soft);
+  }
+  .story-card .story-cat {
+    position: absolute; top: -18px; left: -18px;
+    width: 130px; height: 130px;
+    opacity: 0.12;
+    transform: rotate(-15deg);
+    pointer-events: none;
+  }
+  .story-card h3 {
+    font-family: "Fraunces", serif;
+    font-size: 1.5rem; margin-bottom: 12px;
+    color: var(--saffron);
+    position: relative; z-index: 1;
+  }
+  .story-card p { font-size: 1rem; line-height: 1.7; opacity: 0.95; position: relative; z-index: 1; }
+  .story-card .signature {
+    margin-top: 24px; padding-top: 18px;
+    border-top: 1px solid rgba(255, 244, 230, 0.2);
+    font-family: "Fraunces", serif;
+    font-style: italic; font-size: 0.95rem; opacity: 0.8;
+    position: relative; z-index: 1;
+  }
+
+  /* ============== SCREENSHOTS ============== */
+  .screens-bg {
+    background: linear-gradient(180deg, var(--cream) 0%, var(--peach-3) 100%);
+    border-top: 2px solid var(--ink);
+  }
+  .screens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 32px 22px; margin-top: 12px;
+  }
+  .screen-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .screen-frame {
+    width: 100%;
+    aspect-ratio: 9 / 19.5;
+    background: var(--ink);
+    border-radius: 28px; padding: 6px;
+    box-shadow: var(--shadow-hard);
+    transition: transform .3s ease;
+    position: relative;
+  }
+  /* Subtle alternating tilt — first 5 screens get individual rotations */
+  .screen-item:nth-child(5n+1) .screen-frame { transform: rotate(-2deg); }
+  .screen-item:nth-child(5n+2) .screen-frame { transform: rotate(1.5deg); }
+  .screen-item:nth-child(5n+3) .screen-frame { transform: rotate(-1deg); }
+  .screen-item:nth-child(5n+4) .screen-frame { transform: rotate(2deg); }
+  .screen-item:nth-child(5n+5) .screen-frame { transform: rotate(-1.5deg); }
+  .screen-item:hover .screen-frame { transform: rotate(0) translateY(-6px); }
+  .screen-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: 22px;
+    display: block;
+  }
+  /* Language-specific screenshots: show only the matching language's image */
+  .screen-frame img.screen-img[data-lang-he],
+  .screen-frame img.screen-img[data-lang-en] { display: none; }
+  html[lang="he"] .screen-frame img.screen-img[data-lang-he] { display: block; }
+  html[lang="en"] .screen-frame img.screen-img[data-lang-en] { display: block; }
+  .screen-frame .placeholder {
+    width: 100%; height: 100%;
+    border-radius: 22px;
+    background: linear-gradient(160deg, var(--peach-1), var(--peach-3));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink);
+    font-family: "Fraunces", serif;
+    font-size: 1.1rem; font-weight: 700;
+    text-align: center; padding: 20px;
+  }
+  .screen-caption {
+    text-align: center;
+    max-width: 200px;
+  }
+  .screen-caption .step {
+    display: inline-block;
+    font-family: "Fraunces", serif;
+    font-weight: 800;
+    font-size: 0.78rem;
+    color: var(--coral-deep);
+    letter-spacing: 0.1em;
+    margin-bottom: 2px;
+  }
+  .screen-caption .label {
+    font-family: "Fraunces", serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .screen-caption .desc {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ============== CTA STRIP ============== */
+  .cta-strip {
+    background: linear-gradient(135deg, var(--coral) 0%, var(--peach-1) 100%);
+    color: var(--cream);
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    text-align: center;
+    padding: 64px 24px;
+    position: relative; overflow: hidden;
+  }
+  .cta-strip::before, .cta-strip::after {
+    content: '🍜🏛️🎭🐾☕🛕🎨🏪';
+    position: absolute;
+    font-size: 2.5rem; opacity: 0.15;
+    white-space: nowrap; letter-spacing: 20px;
+  }
+  .cta-strip::before { top: 14px; left: -50px; }
+  .cta-strip::after  { bottom: 14px; right: -50px; }
+  .cta-strip h2 {
+    font-family: "Fraunces", serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  .cta-strip p { margin-bottom: 28px; opacity: 0.95; position: relative; z-index: 1; }
+  .cta-strip .btn { position: relative; z-index: 1; }
+  .cta-strip .btn-primary { background: var(--cream); color: var(--ink); }
+  .cta-strip .btn-primary:hover { background: var(--paper); }
+
+  /* ============== FOOTER ============== */
+  footer {
+    background: var(--ink); color: var(--cream);
+    padding: 48px 24px 28px;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 720px) { .footer-inner { grid-template-columns: 1fr; } }
+  .footer-brand .logo { color: var(--cream); }
+  .footer-brand .logo .cat-logo {
+    background: linear-gradient(160deg, var(--peach-1), var(--peach-3));
+    border-color: var(--cream);
+    box-shadow: 3px 3px 0 var(--cream);
+  }
+  footer h4 {
+    font-family: "Fraunces", serif;
+    font-size: 1.1rem; margin-bottom: 14px;
+    color: var(--saffron);
+  }
+  footer a {
+    color: var(--cream); text-decoration: none;
+    display: inline-block; margin-bottom: 8px;
+    opacity: 0.85;
+    transition: opacity .2s, transform .2s;
+  }
+  footer a:hover { opacity: 1; }
+  html[lang="he"] footer a:hover { transform: translateX(-3px); }
+  html[lang="en"] footer a:hover { transform: translateX(3px); }
+  .footer-tagline {
+    opacity: 0.7; font-size: 0.95rem;
+    margin-top: 12px; max-width: 360px;
+  }
+  .footer-bottom {
+    max-width: 1100px; margin: 32px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 244, 230, 0.15);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+    font-size: 0.85rem; opacity: 0.75;
+  }
+
+  /* ============== UTILITIES ============== */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Show/hide content per language */
+  [data-lang-he], [data-lang-en] { display: none; }
+  html[lang="he"] [data-lang-he] { display: revert; }
+  html[lang="en"] [data-lang-en] { display: revert; }
+  html[lang="he"] p[data-lang-he],
+  html[lang="he"] div[data-lang-he],
+  html[lang="he"] aside[data-lang-he],
+  html[lang="he"] h1[data-lang-he],
+  html[lang="he"] h2[data-lang-he],
+  html[lang="he"] h3[data-lang-he],
+  html[lang="he"] h4[data-lang-he] { display: block; }
+  html[lang="en"] p[data-lang-en],
+  html[lang="en"] div[data-lang-en],
+  html[lang="en"] aside[data-lang-en],
+  html[lang="en"] h1[data-lang-en],
+  html[lang="en"] h2[data-lang-en],
+  html[lang="en"] h3[data-lang-en],
+  html[lang="en"] h4[data-lang-en] { display: block; }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============= REUSABLE CAT LOGO (SVG symbol) ============= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="foufou-cat" viewBox="0 0 100 100">
+    <!-- Ears (triangles, slightly tilted) -->
+    <path d="M22,32 L31,17 L40,33 Z" fill="#FBE3CE" stroke="#2A1F1A" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M60,33 L69,17 L78,32 Z" fill="#FBE3CE" stroke="#2A1F1A" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- Inner ears -->
+    <path d="M27,29 L31,21 L35,30 Z" fill="#E8B89A"/>
+    <path d="M65,30 L69,21 L73,29 Z" fill="#E8B89A"/>
+    <!-- Head -->
+    <circle cx="50" cy="54" r="32" fill="#FBE3CE" stroke="#2A1F1A" stroke-width="1.5"/>
+    <!-- Sunglasses (left lens) -->
+    <rect x="27" y="48" width="19" height="10" rx="3" fill="#1A1A1A"/>
+    <!-- Sunglasses (right lens) -->
+    <rect x="54" y="48" width="19" height="10" rx="3" fill="#1A1A1A"/>
+    <!-- Bridge -->
+    <rect x="44" y="51" width="12" height="3" fill="#1A1A1A"/>
+    <!-- Glasses highlights -->
+    <rect x="29" y="50" width="4" height="2" rx="1" fill="#fff" opacity="0.4"/>
+    <rect x="56" y="50" width="4" height="2" rx="1" fill="#fff" opacity="0.4"/>
+    <!-- Nose -->
+    <path d="M48,64 Q50,67 52,64 Q50,66 48,64 Z" fill="#E58D7A"/>
+    <!-- Mouth -->
+    <path d="M50,67 Q45,72 41,69" stroke="#2A1F1A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M50,67 Q55,72 59,69" stroke="#2A1F1A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <!-- Whisker dots -->
+    <circle cx="36" cy="66" r="0.8" fill="#2A1F1A"/>
+    <circle cx="40" cy="68" r="0.8" fill="#2A1F1A"/>
+    <circle cx="60" cy="68" r="0.8" fill="#2A1F1A"/>
+    <circle cx="64" cy="66" r="0.8" fill="#2A1F1A"/>
+  </symbol>
+</svg>
+
+<!-- ============= NAV ============= -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="cat-logo"><svg><use href="#foufou-cat"/></svg></span>
+      <span>FouFou</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about" data-lang-he>אודות</a>
+      <a href="#about" data-lang-en>About</a>
+      <a href="#features" data-lang-he>תכונות</a>
+      <a href="#features" data-lang-en>Features</a>
+      <a href="#screens" data-lang-he>מסכים</a>
+      <a href="#screens" data-lang-en>Screens</a>
+
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-set-lang="he" class="active">עב</button>
+        <button type="button" data-set-lang="en">EN</button>
+      </div>
+
+      <a class="nav-cta" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
+        <span data-lang-he>פתח אפליקציה →</span>
+        <span data-lang-en>Open App →</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============= HERO ============= -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="hero-badge">
+        <span class="dot"></span>
+        <span>City Trail Generator</span>
+        <span>·</span>
+        <span>v3.23.59</span>
+      </span>
+
+      <h1 class="display hero-title" data-lang-he>
+        מסלולים בעיר, <br />
+        <span class="accent">בלי בלגן</span>.<br />
+        <span class="hero-emoji">🍜</span>
+        <span class="hero-emoji" style="animation-delay:.5s">🏛️</span>
+        <span class="hero-emoji" style="animation-delay:1s">🎭</span>
+      </h1>
+      <h1 class="display hero-title" data-lang-en>
+        City trails, <br />
+        <span class="accent">made personal</span>.<br />
+        <span class="hero-emoji">🍜</span>
+        <span class="hero-emoji" style="animation-delay:.5s">🏛️</span>
+        <span class="hero-emoji" style="animation-delay:1s">🎭</span>
+      </h1>
+
+      <p class="hero-sub" data-lang-he>
+        פופו עוזר לחברים שבאים לבקר להתנהל בעיר עצמאית — עם הידע
+        שצברנו לאורך שנים. הטוב משני העולמות: המלצות אישיות + ניווט גוגל.
+      </p>
+      <p class="hero-sub" data-lang-en>
+        FouFou helps visiting friends explore a city on their own — armed with
+        the knowledge we've gathered over the years. The best of both worlds:
+        personal recommendations + Google navigation.
+      </p>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
+          <span data-lang-he>🚀 פתח את האפליקציה</span>
+          <span data-lang-en>🚀 Open the App</span>
+        </a>
+        <a class="btn btn-secondary" href="#about">
+          <span data-lang-he>איך זה עובד?</span>
+          <span data-lang-en>How does it work?</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <span class="float-deco d1">☕</span>
+      <span class="float-deco d2">🛕</span>
+      <span class="float-deco d3">🎨</span>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-cat">
+            <svg viewBox="0 0 100 100" width="100%" height="100%"><use href="#foufou-cat"/></svg>
+          </div>
+          <div class="phone-title">FouFou</div>
+          <div class="phone-tag">City Trail Generator 🍜🏛️🎭</div>
+          <div class="phone-loader">
+            <div class="spinner"></div>
+            <span data-lang-he>⏳ טוען...</span>
+            <span data-lang-en>⏳ Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============= FEATURES ============= -->
+<section class="block features-bg" id="features">
+  <div class="block-inner">
+    <span class="eyebrow" data-lang-he>למה פופו</span>
+    <span class="eyebrow" data-lang-en>Why FouFou</span>
+
+    <h2 class="display section-title" data-lang-he>ידע מקומי, ניווט עולמי.</h2>
+    <h2 class="display section-title" data-lang-en>Local knowledge, global navigation.</h2>
+
+    <p class="section-lead" data-lang-he>
+      גוגל מצוין בניווט אבל לא תמיד נוח לתפעול. ניסיתי לקחת את הטוב משני העולמות —
+      המלצות מסוננות לפי תחומי עניין, וקישור ישיר לגוגל מפות לניווט.
+    </p>
+    <p class="section-lead" data-lang-en>
+      Google is great at navigation but not always easy to operate. I tried to combine
+      the best of both — curated recommendations filtered by your interests, with a
+      direct link to Google Maps for actual navigation.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature reveal">
+        <div class="feature-icon">🗺️</div>
+        <h3 data-lang-he>מסלולים אישיים</h3>
+        <h3 data-lang-en>Personal trails</h3>
+        <p data-lang-he>בחר תחומי עניין — תרבות, אוכל, קפה, דת, קניות — וקבל מסלול שמתאים בדיוק לך.</p>
+        <p data-lang-en>Pick your interests — culture, food, coffee, religion, shopping — and get a trail tailored just for you.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">⭐</div>
+        <h3 data-lang-he>המלצות מסוננות</h3>
+        <h3 data-lang-en>Curated picks</h3>
+        <p data-lang-he>מקומות שנבחרו בקפידה לפי ניסיון אישי, ולא רק אלגוריתם. עם דירוגי גוגל מהימנים.</p>
+        <p data-lang-en>Places hand-picked from real experience, not just an algorithm. Backed by reliable Google ratings.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">🧭</div>
+        <h3 data-lang-he>ניווט בלחיצה</h3>
+        <h3 data-lang-en>One-tap navigation</h3>
+        <p data-lang-he>כל מקום מקושר ישירות ל-Google Maps. אפס חיכוך בין החלטה לניווט.</p>
+        <p data-lang-en>Every place links straight to Google Maps. Zero friction between decision and direction.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">🌍</div>
+        <h3 data-lang-he>עברית ואנגלית</h3>
+        <h3 data-lang-en>Hebrew & English</h3>
+        <p data-lang-he>ממשק דו-לשוני, מצב בהיר/כהה, ושמירת מועדפים אישית — הכל מקומי במכשיר שלך.</p>
+        <p data-lang-en>Bilingual interface, light/dark mode, and personal favorites — all stored locally on your device.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= ABOUT / STORY ============= -->
+<section class="block" id="about">
+  <div class="block-inner">
+    <span class="eyebrow" data-lang-he>הסיפור</span>
+    <span class="eyebrow" data-lang-en>The Story</span>
+
+    <h2 class="display section-title" data-lang-he>איך פופו נולד</h2>
+    <h2 class="display section-title" data-lang-en>How FouFou was born</h2>
+
+    <div class="about-grid">
+      <div class="about-text" data-lang-he>
+        <p>
+          המערכת נכתבה כדי לעזור לחברים שבאים לבקר ורוצים מצד אחד להתנהל
+          עצמאית, ומצד שני להיעזר בידע שצברנו לאורך תקופת השהות שלנו ושל אחרים בעיר.
+        </p>
+        <p>
+          גוגל כמקור מידע — לא מספיק ברור וקל לתפעול, אבל מצוין בניווט.
+          ניסיתי לקחת את הטוב משני העולמות.
+        </p>
+        <p>
+          הייתי הרבה שנים מנהל מוצר ואני אוהב את עולם חוויית המשתמש. Claude Code
+          הגיע לתודעתי ולעזרתי, תודות לפודקאסט ששמעתי של שאול אמסטרדמסקי, בסוף ינואר 2026.
+        </p>
+        <p>
+          עברתי 3 חודשים של חוויית רכבת הרים ממכרת, שבהם למדתי להכיר את היכולות
+          המדהימות וגם החסרונות הלא מעטים של עולם ה-AI. היה מסע של למידה עמוקה,
+          ואני שמח לחלוק איתכם את התוצר של אותו תהליך — את פופו.
+        </p>
+      </div>
+
+      <div class="about-text" data-lang-en>
+        <p>
+          The system was written to help friends who come to visit and want, on the
+          one hand, to conduct themselves independently — and on the other hand, to
+          use the knowledge we've accumulated during our stay and the stays of others in the city.
+        </p>
+        <p>
+          Google as a source of information is not clear enough or easy to operate,
+          but excellent at navigation. I tried to take the best of both worlds.
+        </p>
+        <p>
+          I was a product manager for many years, and I love the world of user experience.
+          Claude Code came to my attention — and to my aid — thanks to a podcast I heard
+          by Shaul Amsterdamski, at the end of January 2026.
+        </p>
+        <p>
+          I went through three months of an addictive roller-coaster experience, during
+          which I got to know the amazing capabilities and also the many shortcomings
+          of the AI world. It was a journey of deep learning, and I'm happy to share
+          with you the product of that process — FouFou.
+        </p>
+      </div>
+
+      <aside class="story-card" data-lang-he>
+        <svg class="story-cat" viewBox="0 0 100 100"><use href="#foufou-cat"/></svg>
+        <h3>למה השם פופו? 🐾</h3>
+        <p>
+          היה לנו פעם חתול חמוד וסקרן בשם פופו. בצרפתית, "פופו" זה גם
+          <em>שובב</em>. אז חשבתי שזה שילוב מנצח — חתול סקרן ותעלולן שיוביל
+          אותך אל הפינות הכי מעניינות בעיר.
+        </p>
+        <p style="margin-top: 14px;">
+          תשלחו משוב — אשמח להתייחס. תודה. 💛
+        </p>
+        <div class="signature">— Eitan Fisher</div>
+      </aside>
+
+      <aside class="story-card" data-lang-en>
+        <svg class="story-cat" viewBox="0 0 100 100"><use href="#foufou-cat"/></svg>
+        <h3>Why "FouFou"? 🐾</h3>
+        <p>
+          We once had a cute and curious cat named FouFou. In French, "fou-fou"
+          also means <em>naughty</em>. So I thought it was a winning combination —
+          a curious, mischievous cat that leads you to the most interesting corners of the city.
+        </p>
+        <p style="margin-top: 14px;">
+          Send feedback — I'd love to hear from you. Thanks. 💛
+        </p>
+        <div class="signature">— Eitan Fisher</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============= SCREENSHOTS ============= -->
+<section class="block screens-bg" id="screens">
+  <div class="block-inner">
+    <span class="eyebrow" data-lang-he>מבט מבפנים</span>
+    <span class="eyebrow" data-lang-en>A Look Inside</span>
+
+    <h2 class="display section-title" data-lang-he>איך זה נראה</h2>
+    <h2 class="display section-title" data-lang-en>What it looks like</h2>
+
+    <p class="section-lead" data-lang-he>
+      ככה נראה זרימה אופיינית: בוחרים תחומי עניין, אזור בעיר, ומקבלים מסלול מוכן עם הסברים, ניווט ודירוגים.
+    </p>
+    <p class="section-lead" data-lang-en>
+      Here's the typical flow: pick your interests, choose an area, and get a ready-made trail with descriptions, navigation, and ratings.
+    </p>
+
+    <div class="screens-grid">
+      <div class="screen-item">
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/01-topics-he.jpg" alt="בחירת תחומי עניין" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/01-topics.jpg" alt="Choose topics" loading="lazy" />
+        </div>
+        <div class="screen-caption">
+          <div class="step">1</div>
+          <div class="label" data-lang-he>בחירת תחומי עניין</div>
+          <div class="label" data-lang-en>Pick your topics</div>
+          <div class="desc" data-lang-he>תרבות, אוכל, דת, קניות — בוחרים מה מעניין.</div>
+          <div class="desc" data-lang-en>Culture, food, religion, shopping — pick what matters.</div>
+        </div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/02-area-he.jpg" alt="בחירת אזור" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/02-area.jpg" alt="Choose area" loading="lazy" />
+        </div>
+        <div class="screen-caption">
+          <div class="step">2</div>
+          <div class="label" data-lang-he>בוחרים אזור</div>
+          <div class="label" data-lang-en>Choose an area</div>
+          <div class="desc" data-lang-he>שכונה, מקום ספציפי, או "קרוב אליי".</div>
+          <div class="desc" data-lang-en>A neighborhood, a place, or "near me".</div>
+        </div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/03-trail-he.jpg" alt="מסלול פעיל" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/03-trail.jpg" alt="Active trail" loading="lazy" />
+        </div>
+        <div class="screen-caption">
+          <div class="step">3</div>
+          <div class="label" data-lang-he>מסלול פעיל</div>
+          <div class="label" data-lang-en>Active trail</div>
+          <div class="desc" data-lang-he>עצירות בסדר חכם, דירוגים, וכפתור "איפה אני?".</div>
+          <div class="desc" data-lang-en>Stops in smart order, ratings, and a "Where am I?" button.</div>
+        </div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/04-map-he.jpg" alt="מפת מועדפים" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/04-map.jpg" alt="Favorites map" loading="lazy" />
+        </div>
+        <div class="screen-caption">
+          <div class="step">4</div>
+          <div class="label" data-lang-he>מפת מועדפים</div>
+          <div class="label" data-lang-en>Favorites map</div>
+          <div class="desc" data-lang-he>כל המקומות שאהבת, מסונן לפי תחום.</div>
+          <div class="desc" data-lang-en>All your saved places, filtered by topic.</div>
+        </div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/05-place-he.jpg" alt="רשימת מקומות" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/05-place.jpg" alt="Place details" loading="lazy" />
+        </div>
+        <div class="screen-caption">
+          <div class="step">5</div>
+          <div class="label" data-lang-he>פרטי מקום</div>
+          <div class="label" data-lang-en>Place details</div>
+          <div class="desc" data-lang-he>תיאור אישי, טיפים פנימיים, וניווט בלחיצה.</div>
+          <div class="desc" data-lang-en>Personal description, insider tips, one-tap nav.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= CTA STRIP ============= -->
+<section class="cta-strip">
+  <h2 data-lang-he>מוכנים לצאת לדרך?</h2>
+  <h2 data-lang-en>Ready to hit the road?</h2>
+
+  <p data-lang-he>פופו רץ ישר מהדפדפן. בלי הורדה, בלי הרשמה.</p>
+  <p data-lang-en>FouFou runs straight from your browser. No download, no signup.</p>
+
+  <a class="btn btn-primary" href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
+    <span data-lang-he>🐾 פתח את פופו</span>
+    <span data-lang-en>🐾 Open FouFou</span>
+  </a>
+</section>
+
+<!-- ============= FOOTER ============= -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">
+        <span class="cat-logo"><svg><use href="#foufou-cat"/></svg></span>
+        <span>FouFou</span>
+      </div>
+      <p class="footer-tagline" data-lang-he>
+        City Trail Generator. הטוב משני העולמות — ידע מקומי וניווט גוגל.
+      </p>
+      <p class="footer-tagline" data-lang-en>
+        City Trail Generator. The best of both worlds — local knowledge and Google navigation.
+      </p>
+    </div>
+
+    <div>
+      <h4 data-lang-he>קישורים</h4>
+      <h4 data-lang-en>Links</h4>
+      <a href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
+        <span data-lang-he>פתח אפליקציה</span>
+        <span data-lang-en>Open the app</span>
+      </a><br />
+      <a href="#about"><span data-lang-he>אודות</span><span data-lang-en>About</span></a><br />
+      <a href="#features"><span data-lang-he>תכונות</span><span data-lang-en>Features</span></a><br />
+      <a href="#screens"><span data-lang-he>מסכים</span><span data-lang-en>Screens</span></a>
+    </div>
+
+    <div>
+      <h4 data-lang-he>יצירת קשר</h4>
+      <h4 data-lang-en>Contact</h4>
+      <a href="mailto:eitanfisher100@gmail.com">eitanfisher100@gmail.com</a><br />
+      <span style="opacity: 0.7; font-size: 0.85rem;" data-lang-he>
+        או דרך כפתור המשוב באפליקציה
+      </span>
+      <span style="opacity: 0.7; font-size: 0.85rem;" data-lang-en>
+        Or via the feedback button in the app
+      </span>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span data-lang-he>© 2026 Eitan Fisher · נתוני מקומות מסופקים על ידי Google Places API</span>
+    <span data-lang-en>© 2026 Eitan Fisher · Place data provided by Google Places API</span>
+  </div>
+</footer>
+
+<script>
+  /* ====================================================
+     i18n: language detection + toggle + persistence
+     ==================================================== */
+  (function () {
+    const SUPPORTED  = ['he', 'en'];
+    const STORAGE_KEY = 'foufou.lang';
+
+    function detectInitialLang() {
+      try {
+        const urlLang = new URLSearchParams(location.search).get('lang');
+        if (urlLang && SUPPORTED.includes(urlLang)) return urlLang;
+      } catch (e) { /* ignore */ }
+
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved && SUPPORTED.includes(saved)) return saved;
+      } catch (e) { /* localStorage may be blocked */ }
+
+      const browserLangs = navigator.languages || [navigator.language || 'he'];
+      for (const raw of browserLangs) {
+        const lang = (raw || '').toLowerCase().split('-')[0];
+        if (SUPPORTED.includes(lang)) return lang;
+      }
+
+      return 'he';
+    }
+
+    function applyLang(lang) {
+      if (!SUPPORTED.includes(lang)) lang = 'he';
+
+      const html = document.documentElement;
+      html.lang = lang;
+      html.dir  = (lang === 'he') ? 'rtl' : 'ltr';
+
+      document.querySelectorAll('[data-set-lang]').forEach(btn => {
+        const isActive = btn.dataset.setLang === lang;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+      });
+
+      document.title = (lang === 'he')
+        ? 'FouFou — מחולל מסלולים עירוני 🍜🏛️🎭'
+        : 'FouFou — City Trail Generator 🍜🏛️🎭';
+    }
+
+    function setLang(lang) {
+      applyLang(lang);
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) { /* ignore */ }
+    }
+
+    applyLang(detectInitialLang());
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('[data-set-lang]').forEach(btn => {
+        btn.addEventListener('click', () => setLang(btn.dataset.setLang));
+      });
+    });
+  })();
+
+  /* Reveal-on-scroll */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
