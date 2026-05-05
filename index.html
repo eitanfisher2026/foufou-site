@@ -130,31 +130,27 @@
   }
   .nav-cta:hover { background: var(--coral); }
 
-  /* Language toggle — flag emoji buttons */
-  .lang-switch {
-    display: inline-flex; align-items: center;
-    gap: 4px;
-  }
-  .lang-switch button {
-    background: transparent; border: none;
-    font-size: 1.4rem;
-    padding: 2px 6px;
-    border-radius: 6px;
+  /* Language toggle — single pill button (matches app pattern) */
+  .lang-toggle {
+    background: var(--paper);
+    border: 1.5px solid rgba(42, 31, 26, 0.15);
+    border-radius: 999px;
+    padding: 6px 14px;
     cursor: pointer;
-    transition: opacity .2s ease, transform .15s ease, background .2s ease;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     line-height: 1;
-    opacity: 0.45;
-    filter: grayscale(0.4);
+    transition: background .2s ease, transform .15s ease, border-color .2s ease;
   }
-  .lang-switch button.active {
-    opacity: 1;
-    filter: grayscale(0);
-    background: rgba(42, 31, 26, 0.08);
-  }
-  .lang-switch button:hover {
-    opacity: 1;
-    filter: grayscale(0);
-    transform: scale(1.1);
+  .lang-toggle:hover {
+    background: var(--cream);
+    border-color: rgba(42, 31, 26, 0.3);
+    transform: scale(1.04);
   }
 
   @media (max-width: 720px) {
@@ -642,10 +638,10 @@
       <a href="#screens" data-lang-he>מסכים</a>
       <a href="#screens" data-lang-en>Screens</a>
 
-      <div class="lang-switch" role="group" aria-label="Language">
-        <button type="button" data-set-lang="he" class="active" aria-label="עברית">🇮🇱</button>
-        <button type="button" data-set-lang="en" aria-label="English">🇺🇸</button>
-      </div>
+      <button type="button" class="lang-toggle" data-toggle-lang aria-label="Switch language">
+        <span data-lang-he>🇺🇸 EN</span>
+        <span data-lang-en>🇮🇱 עב</span>
+      </button>
     </div>
   </div>
 </nav>
@@ -887,38 +883,38 @@
 
     <div class="screens-grid">
       <div class="screen-item">
-        <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/01-he.jpg" alt="" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/01.jpg" alt="" loading="lazy" />
-        </div>
         <div class="screen-caption">
           <div class="step">1</div>
           <div class="label" data-lang-he>בחרו תחומי עניין</div>
           <div class="label" data-lang-en>Pick your interests</div>
         </div>
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/01-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/01.jpg" alt="" loading="lazy" />
+        </div>
       </div>
 
       <div class="screen-item">
-        <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/02-he.jpg" alt="" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/02.jpg" alt="" loading="lazy" />
-        </div>
         <div class="screen-caption">
           <div class="step">2</div>
           <div class="label" data-lang-he>בחרו אזור</div>
           <div class="label" data-lang-en>Pick an area</div>
         </div>
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/02-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/02.jpg" alt="" loading="lazy" />
+        </div>
       </div>
 
       <div class="screen-item">
-        <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/03-he.jpg" alt="" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/03.jpg" alt="" loading="lazy" />
-        </div>
         <div class="screen-caption">
           <div class="step">3</div>
           <div class="label" data-lang-he>צאו לדרך</div>
           <div class="label" data-lang-en>Go!</div>
+        </div>
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/03-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/03.jpg" alt="" loading="lazy" />
         </div>
       </div>
     </div>
@@ -1040,8 +1036,12 @@
     applyLang(detectInitialLang());
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('[data-set-lang]').forEach(btn => {
-        btn.addEventListener('click', () => setLang(btn.dataset.setLang));
+      // Single toggle button: switches to the OPPOSITE of the current language
+      document.querySelectorAll('[data-toggle-lang]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const current = document.documentElement.lang;
+          setLang(current === 'he' ? 'en' : 'he');
+        });
       });
     });
   })();
