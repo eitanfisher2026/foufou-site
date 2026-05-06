@@ -130,27 +130,41 @@
   }
   .nav-cta:hover { background: var(--coral); }
 
-  /* Language toggle — single pill button (matches app pattern) */
-  .lang-toggle {
-    background: var(--paper);
-    border: 1.5px solid rgba(42, 31, 26, 0.15);
-    border-radius: 999px;
-    padding: 6px 14px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--ink);
+  /* Language toggle — minimal text "עב · EN", active highlighted */
+  .lang-switch {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     line-height: 1;
-    transition: background .2s ease, transform .15s ease, border-color .2s ease;
   }
-  .lang-toggle:hover {
-    background: var(--cream);
-    border-color: rgba(42, 31, 26, 0.3);
-    transform: scale(1.04);
+  .lang-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 5px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    opacity: 0.5;
+    line-height: 1;
+    transition: opacity .2s, color .2s, font-weight .2s, background .2s;
+  }
+  .lang-btn.active {
+    opacity: 1;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .lang-btn:hover {
+    opacity: 1;
+    color: var(--ink);
+  }
+  .lang-divider {
+    color: var(--ink-soft);
+    opacity: 0.3;
+    font-size: 0.82rem;
+    line-height: 1;
   }
 
   @media (max-width: 720px) {
@@ -664,10 +678,11 @@
 <!-- ============= NAV ============= -->
 <nav>
   <div class="nav-inner">
-    <button type="button" class="lang-toggle" data-toggle-lang aria-label="Switch language">
-      <span data-lang-he>🇺🇸 EN</span>
-      <span data-lang-en>🇮🇱 עב</span>
-    </button>
+    <div class="lang-switch" role="group" aria-label="Language" dir="ltr">
+      <button type="button" class="lang-btn" data-set-lang="he" aria-label="עברית">עב</button>
+      <span class="lang-divider">·</span>
+      <button type="button" class="lang-btn" data-set-lang="en" aria-label="English">EN</button>
+    </div>
     <a href="#" class="logo">
       <span>FouFou</span>
     </a>
@@ -1087,12 +1102,9 @@
     applyLang(detectInitialLang());
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Single toggle button: switches to the OPPOSITE of the current language
-      document.querySelectorAll('[data-toggle-lang]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const current = document.documentElement.lang;
-          setLang(current === 'he' ? 'en' : 'he');
-        });
+      // Two-button toggle: each button sets its own language
+      document.querySelectorAll('[data-set-lang]').forEach(btn => {
+        btn.addEventListener('click', () => setLang(btn.dataset.setLang));
       });
     });
   })();
