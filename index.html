@@ -130,41 +130,39 @@
   }
   .nav-cta:hover { background: var(--coral); }
 
-  /* Language toggle — minimal text "עב · EN", active highlighted */
+  /* Language toggle — segmented pill (iOS-style switch) */
   .lang-switch {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    background: rgba(42, 31, 26, 0.07);
+    border-radius: 999px;
+    padding: 3px;
     line-height: 1;
   }
   .lang-btn {
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 4px 5px;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 0.82rem;
-    font-weight: 500;
+    padding: 5px 11px;
+    border-radius: 999px;
+    /* Sans-serif to differ from Fraunces serif of the FouFou wordmark */
+    font-family: "Heebo", system-ui, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     color: var(--ink-soft);
-    opacity: 0.5;
     line-height: 1;
-    transition: opacity .2s, color .2s, font-weight .2s, background .2s;
+    min-width: 26px;
+    transition: background .2s, color .2s, box-shadow .2s;
   }
   .lang-btn.active {
-    opacity: 1;
+    background: var(--paper);
     color: var(--ink);
-    font-weight: 700;
+    box-shadow: 0 1px 2px rgba(42, 31, 26, 0.1);
   }
-  .lang-btn:hover {
-    opacity: 1;
+  .lang-btn:hover:not(.active) {
     color: var(--ink);
-  }
-  .lang-divider {
-    color: var(--ink-soft);
-    opacity: 0.3;
-    font-size: 0.82rem;
-    line-height: 1;
+    background: rgba(255, 255, 255, 0.4);
   }
 
   @media (max-width: 720px) {
@@ -680,7 +678,6 @@
   <div class="nav-inner">
     <div class="lang-switch" role="group" aria-label="Language" dir="ltr">
       <button type="button" class="lang-btn" data-set-lang="he" aria-label="עברית">עב</button>
-      <span class="lang-divider">·</span>
       <button type="button" class="lang-btn" data-set-lang="en" aria-label="English">EN</button>
     </div>
     <a href="#" class="logo">
