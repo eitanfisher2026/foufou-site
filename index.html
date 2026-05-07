@@ -85,50 +85,40 @@
     object-fit: contain;
   }
 
-  /* ============== NAV ============== */
+  /* ============== NAV — two rows: brand centered, lang toggle in corner ============== */
   nav {
     position: sticky; top: 0; z-index: 50;
     background: rgba(255, 244, 230, 0.75);
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(42, 31, 26, 0.08);
-    padding: 10px 20px;
+    padding: 12px 20px 8px;
   }
   .nav-inner {
     max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 14px;
+    display: flex; flex-direction: column;
+    gap: 4px;
+  }
+  .brand-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .lang-row {
+    display: flex;
+    justify-content: flex-end;
+    direction: ltr; /* Keep lang toggle in the same physical corner regardless of doc direction */
   }
   .logo {
     display: flex; align-items: center; gap: 10px;
-    font-family: "Fraunces", serif; font-weight: 700; font-size: 1.3rem;
+    font-family: "Fraunces", serif; font-weight: 700;
+    font-size: clamp(1.05rem, 3.2vw, 1.4rem);
     text-decoration: none; color: var(--ink);
+    text-align: center;
   }
   .logo .cat-logo {
-    width: 36px; height: 36px;
+    width: 32px; height: 32px;
     border-radius: 50%;
   }
-
-  .nav-links {
-    display: flex; gap: 22px; align-items: center;
-    font-weight: 500;
-  }
-  .nav-links a {
-    color: var(--ink); text-decoration: none;
-    font-size: 0.95rem;
-    opacity: 0.78;
-    transition: opacity .2s;
-  }
-  .nav-links a:hover { opacity: 1; }
-  .nav-cta {
-    background: var(--ink);
-    color: var(--cream) !important;
-    padding: 8px 18px !important;
-    border-radius: 999px;
-    opacity: 1 !important;
-    font-weight: 600;
-    transition: background .2s ease;
-  }
-  .nav-cta:hover { background: var(--coral); }
 
   /* Language toggle — segmented pill (iOS-style switch) */
   .lang-switch {
@@ -165,14 +155,8 @@
     background: rgba(255, 255, 255, 0.4);
   }
 
-  @media (max-width: 720px) {
-    .nav-links a:not(.nav-cta) { display: none; }
-    .nav-links { gap: 12px; }
-  }
   @media (max-width: 420px) {
-    .nav-cta { padding: 7px 14px !important; font-size: 0.85rem; }
-    .logo { font-size: 1.15rem; }
-    .logo .cat-logo { width: 32px; height: 32px; }
+    .logo .cat-logo { width: 28px; height: 28px; }
   }
 
   /* ============== HERO — animated cat as launcher ============== */
@@ -186,49 +170,78 @@
     display: flex; flex-direction: column; align-items: center;
   }
 
-  /* Animated cat (clickable to launch app) */
+  /* Animated cat — styled as a clear, inviting button */
   .hero-cat-link {
-    display: inline-block;
-    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    padding: 14px;
     border-radius: 50%;
-    transition: transform 0.3s ease;
+    background: radial-gradient(circle at 50% 45%, rgba(255, 251, 242, 0.95) 0%, rgba(255, 244, 230, 0.6) 70%);
+    border: 4px solid var(--coral);
+    box-shadow: 0 10px 28px rgba(231, 111, 81, 0.30), 0 0 0 0 rgba(231, 111, 81, 0.55);
     cursor: pointer;
     text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    animation: pulse-cat 2.2s ease-in-out infinite;
   }
-  .hero-cat-link:hover { transform: scale(1.06); }
-  .hero-cat-link:active { transform: scale(0.98); }
+  .hero-cat-link:hover {
+    transform: scale(1.08);
+    border-color: var(--coral-deep);
+    animation-play-state: paused;
+    box-shadow: 0 14px 32px rgba(231, 111, 81, 0.45);
+  }
+  .hero-cat-link:active { transform: scale(0.97); }
   .hero-cat-svg {
     width: 150px; height: 150px;
     filter: drop-shadow(0 8px 22px rgba(42, 31, 26, 0.18));
   }
   @media (max-width: 480px) {
     .hero-cat-svg { width: 130px; height: 130px; }
+    .hero-cat-link { padding: 10px; border-width: 3px; }
   }
 
-  /* Click-to-launch hint pill (with bouncing arrow) */
+  @keyframes pulse-cat {
+    0%, 100% {
+      box-shadow: 0 10px 28px rgba(231, 111, 81, 0.30), 0 0 0 0 rgba(231, 111, 81, 0.55);
+    }
+    50% {
+      box-shadow: 0 10px 28px rgba(231, 111, 81, 0.40), 0 0 0 22px rgba(231, 111, 81, 0);
+    }
+  }
+
+  /* Click-to-launch hint pill — bigger, more prominent */
   .hero-click-hint {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     background: var(--ink);
     color: var(--cream);
-    padding: 8px 18px;
+    padding: 14px 28px;
     border-radius: 999px;
-    font-size: 0.88rem;
-    font-weight: 600;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 14px rgba(42, 31, 26, 0.18);
+    font-size: clamp(0.95rem, 2.4vw, 1.1rem);
+    font-weight: 700;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 22px rgba(42, 31, 26, 0.28);
     text-decoration: none;
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
   }
-  .hero-click-hint:hover { background: var(--coral); }
+  .hero-click-hint:hover {
+    background: var(--coral);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(231, 111, 81, 0.35);
+  }
   .hero-click-hint .arrow {
     display: inline-block;
-    font-size: 1rem;
-    animation: bounce-arrow 1.4s ease-in-out infinite;
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+    animation: bounce-arrow 1.2s ease-in-out infinite;
   }
   @keyframes bounce-arrow {
     0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-4px); }
+    50%      { transform: translateY(-6px); }
   }
 
   /* App splash cat animations (copied from FouFou app) */
@@ -569,7 +582,7 @@
   }
   .footer-inner {
     max-width: 1100px; margin: 0 auto;
-    display: grid; grid-template-columns: 2fr 1fr 1fr;
+    display: grid; grid-template-columns: 2fr 1fr;
     gap: 32px;
   }
   @media (max-width: 720px) { .footer-inner { grid-template-columns: 1fr; } }
@@ -676,20 +689,17 @@
 <!-- ============= NAV ============= -->
 <nav>
   <div class="nav-inner">
-    <div class="lang-switch" role="group" aria-label="Language" dir="ltr">
-      <button type="button" class="lang-btn" data-set-lang="he" aria-label="עברית">עב</button>
-      <button type="button" class="lang-btn" data-set-lang="en" aria-label="English">EN</button>
+    <div class="brand-row">
+      <a href="#" class="logo">
+        <span data-lang-he>פופו - יוצר טיולי עיר</span>
+        <span data-lang-en>FouFou - City Trail Generator</span>
+      </a>
     </div>
-    <a href="#" class="logo">
-      <span>FouFou</span>
-    </a>
-    <div class="nav-links">
-      <a href="#about" data-lang-he>אודות</a>
-      <a href="#about" data-lang-en>About</a>
-      <a href="#features" data-lang-he>תכונות</a>
-      <a href="#features" data-lang-en>Features</a>
-      <a href="#screens" data-lang-he>מסכים</a>
-      <a href="#screens" data-lang-en>Screens</a>
+    <div class="lang-row">
+      <div class="lang-switch" role="group" aria-label="Language" dir="ltr">
+        <button type="button" class="lang-btn" data-set-lang="he" aria-label="עברית">עב</button>
+        <button type="button" class="lang-btn" data-set-lang="en" aria-label="English">EN</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -844,6 +854,62 @@
   </div>
 </section>
 
+<!-- ============= SCREENSHOTS — moved to follow Features (Plan & Navigate is the last feature card) ============= -->
+<section class="block screens-bg" id="screens">
+  <div class="block-inner">
+    <span class="eyebrow" data-lang-he>מבט מבפנים</span>
+    <span class="eyebrow" data-lang-en>A Look Inside</span>
+
+    <h2 class="display section-title" data-lang-he>איך זה נראה</h2>
+    <h2 class="display section-title" data-lang-en>What it looks like</h2>
+
+    <p class="section-lead" data-lang-he>
+      שלושה צעדים פשוטים — תחומי עניין, אזור, יציאה לדרך.
+    </p>
+    <p class="section-lead" data-lang-en>
+      Three simple steps — pick interests, pick an area, and go.
+    </p>
+
+    <div class="screens-grid">
+      <div class="screen-item">
+        <div class="screen-caption">
+          <div class="step">1</div>
+          <div class="label" data-lang-he>בחרו תחומי עניין</div>
+          <div class="label" data-lang-en>Pick your interests</div>
+        </div>
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/01-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/01.jpg" alt="" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-caption">
+          <div class="step">2</div>
+          <div class="label" data-lang-he>בחרו אזור</div>
+          <div class="label" data-lang-en>Pick an area</div>
+        </div>
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/02-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/02.jpg" alt="" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="screen-item">
+        <div class="screen-caption">
+          <div class="step">3</div>
+          <div class="label" data-lang-he>צאו לדרך</div>
+          <div class="label" data-lang-en>Go!</div>
+        </div>
+        <div class="screen-frame">
+          <img class="screen-img" data-lang-he src="screens/03-he.jpg" alt="" loading="lazy" />
+          <img class="screen-img" data-lang-en src="screens/03.jpg" alt="" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============= ABOUT / STORY ============= -->
 <section class="block" id="about">
   <div class="block-inner">
@@ -928,62 +994,6 @@
   </div>
 </section>
 
-<!-- ============= SCREENSHOTS ============= -->
-<section class="block screens-bg" id="screens">
-  <div class="block-inner">
-    <span class="eyebrow" data-lang-he>מבט מבפנים</span>
-    <span class="eyebrow" data-lang-en>A Look Inside</span>
-
-    <h2 class="display section-title" data-lang-he>איך זה נראה</h2>
-    <h2 class="display section-title" data-lang-en>What it looks like</h2>
-
-    <p class="section-lead" data-lang-he>
-      שלושה צעדים פשוטים — תחומי עניין, אזור, יציאה לדרך.
-    </p>
-    <p class="section-lead" data-lang-en>
-      Three simple steps — pick interests, pick an area, and go.
-    </p>
-
-    <div class="screens-grid">
-      <div class="screen-item">
-        <div class="screen-caption">
-          <div class="step">1</div>
-          <div class="label" data-lang-he>בחרו תחומי עניין</div>
-          <div class="label" data-lang-en>Pick your interests</div>
-        </div>
-        <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/01-he.jpg" alt="" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/01.jpg" alt="" loading="lazy" />
-        </div>
-      </div>
-
-      <div class="screen-item">
-        <div class="screen-caption">
-          <div class="step">2</div>
-          <div class="label" data-lang-he>בחרו אזור</div>
-          <div class="label" data-lang-en>Pick an area</div>
-        </div>
-        <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/02-he.jpg" alt="" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/02.jpg" alt="" loading="lazy" />
-        </div>
-      </div>
-
-      <div class="screen-item">
-        <div class="screen-caption">
-          <div class="step">3</div>
-          <div class="label" data-lang-he>צאו לדרך</div>
-          <div class="label" data-lang-en>Go!</div>
-        </div>
-        <div class="screen-frame">
-          <img class="screen-img" data-lang-he src="screens/03-he.jpg" alt="" loading="lazy" />
-          <img class="screen-img" data-lang-en src="screens/03.jpg" alt="" loading="lazy" />
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============= CTA STRIP ============= -->
 <section class="cta-strip">
   <h2 data-lang-he>מוכנים לצאת לדרך?</h2>
@@ -1012,18 +1022,6 @@
       <p class="footer-tagline" data-lang-en>
         City Trail Generator. The best of both worlds — local knowledge and Google navigation.
       </p>
-    </div>
-
-    <div>
-      <h4 data-lang-he>קישורים</h4>
-      <h4 data-lang-en>Links</h4>
-      <a href="https://eitanfisher2026.github.io/FouFou/" target="_blank" rel="noopener">
-        <span data-lang-he>פתח אפליקציה</span>
-        <span data-lang-en>Open the app</span>
-      </a><br />
-      <a href="#about"><span data-lang-he>אודות</span><span data-lang-en>About</span></a><br />
-      <a href="#features"><span data-lang-he>תכונות</span><span data-lang-en>Features</span></a><br />
-      <a href="#screens"><span data-lang-he>מסכים</span><span data-lang-en>Screens</span></a>
     </div>
 
     <div>
