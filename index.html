@@ -1138,6 +1138,8 @@
         var chip = e.target.closest('.city-chip');
         if (chip && chip.dataset.city) {
           localStorage.setItem('foufou_last_city', chip.dataset.city);
+          grid.querySelectorAll('.city-chip.selected').forEach(function (el) { el.classList.remove('selected'); });
+          chip.classList.add('selected');
         }
       });
     }
