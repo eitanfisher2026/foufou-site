@@ -331,6 +331,11 @@
     border-color: var(--coral);
   }
   .city-chip:active { transform: scale(0.97); }
+  .city-chip.selected {
+    border-color: var(--coral);
+    background: white;
+    box-shadow: 0 4px 14px rgba(231, 111, 81, 0.22);
+  }
   .city-chip-icon { font-size: 1.15em; line-height: 1; }
   .cities-loading { color: var(--ink-soft); font-size: 0.9rem; opacity: 0.65; }
 
@@ -1116,12 +1121,25 @@
       grid.innerHTML = entries.map(function (r) {
         const icon = (r.icon && !r.icon.startsWith('data:')) ? r.icon : '🏙️';
         const url = APP + '?city=' + encodeURIComponent(r.id);
-        return '<a href="' + url + '" target="_blank" rel="noopener" class="city-chip">' +
+        return '<a href="' + url + '" target="_blank" rel="noopener" class="city-chip" data-city="' + r.id + '">' +
           '<span class="city-chip-icon">' + icon + '</span>' +
           '<span data-lang-he>' + (r.name || r.nameEn) + '</span>' +
           '<span data-lang-en>' + (r.nameEn || r.name) + '</span>' +
           '</a>';
       }).join('');
+
+      var lastCity = localStorage.getItem('foufou_last_city');
+      if (lastCity) {
+        var sel = grid.querySelector('[data-city="' + lastCity + '"]');
+        if (sel) sel.classList.add('selected');
+      }
+
+      grid.addEventListener('click', function (e) {
+        var chip = e.target.closest('.city-chip');
+        if (chip && chip.dataset.city) {
+          localStorage.setItem('foufou_last_city', chip.dataset.city);
+        }
+      });
     }
 
     fetch(DB + '/settings/cityRegistry.json')
