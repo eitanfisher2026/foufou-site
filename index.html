@@ -338,6 +338,31 @@
   }
   .city-chip-icon { font-size: 1.15em; line-height: 1; }
   .cities-loading { color: var(--ink-soft); font-size: 0.9rem; opacity: 0.65; }
+  .trail-anywhere-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35);
+    transition: transform .15s, box-shadow .2s;
+  }
+  .trail-anywhere-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.45);
+  }
+  .trail-anywhere-btn:active { transform: scale(0.97); }
+  .trail-anywhere-btn.selected {
+    box-shadow: 0 0 0 3px white, 0 0 0 5px #059669;
+  }
 
   .hero-badge {
     display: inline-flex; align-items: center; gap: 8px;
@@ -769,6 +794,11 @@
         <span class="cities-loading">...</span>
       </div>
     </div>
+    <div style="text-align:center; margin-top:6px;">
+      <a id="trail-anywhere-btn" href="https://eitanfisher2026.github.io/FouFou/?mode=anywhere" target="_blank" rel="noopener" class="trail-anywhere-btn">
+        🌍 <span data-lang-he>מסלול בכל מקום</span><span data-lang-en>Trail Anywhere</span>
+      </a>
+    </div>
   </div>
 </header>
 
@@ -1128,8 +1158,9 @@
           '</a>';
       }).join('');
 
+      var lastMode = localStorage.getItem('foufou_site_mode');
       var lastCity = localStorage.getItem('foufou_last_city');
-      if (lastCity) {
+      if (lastMode !== 'anywhere' && lastCity) {
         var sel = grid.querySelector('[data-city="' + lastCity + '"]');
         if (sel) sel.classList.add('selected');
       }
@@ -1138,9 +1169,27 @@
         var chip = e.target.closest('.city-chip');
         if (chip && chip.dataset.city) {
           localStorage.setItem('foufou_last_city', chip.dataset.city);
+          localStorage.setItem('foufou_site_mode', 'cities');
           grid.querySelectorAll('.city-chip.selected').forEach(function (el) { el.classList.remove('selected'); });
           chip.classList.add('selected');
+          var taBtn = document.getElementById('trail-anywhere-btn');
+          if (taBtn) taBtn.classList.remove('selected');
         }
+      });
+    }
+
+    // Trail Anywhere button persistence
+    var taBtn = document.getElementById('trail-anywhere-btn');
+    if (taBtn) {
+      if (localStorage.getItem('foufou_site_mode') === 'anywhere') {
+        taBtn.classList.add('selected');
+      }
+      taBtn.addEventListener('click', function () {
+        localStorage.setItem('foufou_site_mode', 'anywhere');
+        localStorage.removeItem('foufou_last_city');
+        taBtn.classList.add('selected');
+        var grid = document.getElementById('cities-grid');
+        if (grid) grid.querySelectorAll('.city-chip.selected').forEach(function (el) { el.classList.remove('selected'); });
       });
     }
 
